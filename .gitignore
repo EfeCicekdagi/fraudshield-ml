@@ -61,6 +61,7 @@ wandb/
 *.pt
 *.pth
 *.onnx
+models/
 
 # Logs and temporary files
 *.log
