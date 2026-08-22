@@ -19,9 +19,14 @@ Bu rapor, fraudshield-ml projesinin ilk aşaması olan veri doğrulama ve EDA s�
 - Fraud işlemleri yalnızca belirli türlerde (genellikle TRANSFER ve CASH_OUT) gerçekleşmiştir.
 
 ## 4. isFlaggedFraud Mekanizmasının Durumu
-- isFraud ile isFlaggedFraud karşılaştırması (çapraz tablo):
-{0: {0: 6354407, 1: 8197}, 1: {0: 0, 1: 16}}
-- Mevcut isFlaggedFraud (200.000 üzeri yasadışı transfer girişimi gibi sabit bir kural) kuralı dolandırıcılıkları yakalamada oldukça **başarısızdır**. Hedef değişken olarak kullanılamaz ve tahmin gücü çok düşüktür.
+- `isFlaggedFraud` kuralı tüm veri setinde incelendiğinde şu sonuçları vermiştir:
+  - **True Negative (TN):** 6,354,407
+  - **False Positive (FP):** 0
+  - **False Negative (FN):** 8,197
+  - **True Positive (TP):** 16
+- **Precision (Kesinlik):** 1.0 (hiç yanlış alarm vermiyor)
+- **Recall (Duyarlılık):** %0.19 (çok düşük)
+- Mevcut `isFlaggedFraud` kuralı (200.000 üzeri yasadışı transfer girişimi gibi sabit bir kural), tespit ettiği vakalarda (16 adet) %100 doğru çalışsa da, toplam fraud vakalarının (8.213 adet) çok küçük bir kısmını yakalamaktadır. Precision'ı yüksek, ancak Recall çok düşük olduğu için tek başına model veya güçlü bir kural olarak kullanılması yetersizdir.
 
 ## 5. Veri Kalitesi Sorunları
 - **Eksik Sütunlar:** []
