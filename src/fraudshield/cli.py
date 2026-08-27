@@ -88,5 +88,16 @@ def split_data(config: str = typer.Option(..., help="Path to the config yaml fil
         logger.error(f"Error during data splitting: {e}")
         raise typer.Exit(code=1)
 
+@app.command()
+def train_baseline(
+    config: Path = typer.Option(..., "--config", "-c", help="Path to baseline config file (e.g., configs/baseline.yaml)")
+):
+    """Train baseline models and evaluate thresholds."""
+    from fraudshield.pipelines.training_pipeline import run_baseline_pipeline
+    
+    logger.info("Starting baseline training pipeline...")
+    run_baseline_pipeline(str(config))
+    logger.info("Baseline training pipeline finished.")
+
 if __name__ == "__main__":
     app()

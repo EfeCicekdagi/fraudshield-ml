@@ -1,0 +1,51 @@
+random_seed: 42
+target_column: "isFraud"
+temporal_column: "step"
+model_artifact_dir: "artifacts/runs/"
+report_dir: "reports/"
+data_config_path: "configs/data.yaml"
+
+feature_sets:
+  core:
+    - "type"
+    - "amount"
+    - "amount_log1p"
+    - "hour_of_day"
+    - "day"
+    - "is_risky_type"
+    - "orig_oldbalance_is_zero"
+    - "orig_newbalance_is_zero"
+    - "dest_oldbalance_is_zero"
+    - "dest_newbalance_is_zero"
+    - "amount_to_oldbalance_orig_ratio"
+    - "amount_to_oldbalance_dest_ratio"
+    - "orig_account_type"
+    - "dest_account_type"
+
+  engineered:
+    - "type"
+    - "amount"
+    - "amount_log1p"
+    - "hour_of_day"
+    - "day"
+    - "is_risky_type"
+    - "orig_oldbalance_is_zero"
+    - "orig_newbalance_is_zero"
+    - "dest_oldbalance_is_zero"
+    - "dest_newbalance_is_zero"
+    - "amount_to_oldbalance_orig_ratio"
+    - "amount_to_oldbalance_dest_ratio"
+    - "orig_account_type"
+    - "dest_account_type"
+    - "orig_balance_delta"
+    - "dest_balance_delta"
+    - "error_balance_orig"
+    - "abs_error_balance_orig"
+    - "error_balance_dest"
+    - "abs_error_balance_dest"
+
+false_positive_cost: 1
+false_negative_cost: 100
+min_recall_targets:
+  - 0.80
+  - 0.90

@@ -41,7 +41,12 @@ def test_load_raw_data_file_not_found():
 
 def test_validate_raw_data(dummy_data_path):
     df = load_raw_data(dummy_data_path)
-    results = validate_raw_data(df)
+    required_cols = [
+        'step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 
+        'newbalanceOrig', 'nameDest', 'oldbalanceDest', 
+        'newbalanceDest', 'isFraud', 'isFlaggedFraud'
+    ]
+    results = validate_raw_data(df, required_columns=required_cols)
     
     assert results['has_all_required_columns'] == True
     assert results['num_rows'] == 2
