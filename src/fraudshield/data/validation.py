@@ -1,30 +1,31 @@
 import pandas as pd
 import numpy as np
+from fraudshield.logging_config import setup_logger
 
-def validate_raw_data(df: pd.DataFrame) -> dict:
+logger = setup_logger(__name__)
+
+def validate_raw_data(df: pd.DataFrame, required_columns: list[str]) -> dict:
     """
     Performs data validation and basic exploratory checks on the raw DataFrame.
     
     Args:
         df (pd.DataFrame): The raw data loaded.
+        required_columns (list[str]): List of columns expected in the DataFrame.
         
     Returns:
         dict: A dictionary containing validation metrics and findings.
     """
+    logger.info("Starting raw data validation...")
     results = {}
     
     # 1. Required Columns Check
-    required_columns = [
-        'step', 'type', 'amount', 'nameOrig', 'oldbalanceOrg', 
-        'newbalanceOrig', 'nameDest', 'oldbalanceDest', 
-        'newbalanceDest', 'isFraud', 'isFlaggedFraud'
-    ]
     missing_cols = [col for col in required_columns if col not in df.columns]
     results['missing_required_columns'] = missing_cols
     results['has_all_required_columns'] = len(missing_cols) == 0
     
     # Early exit if required columns are missing to prevent key errors
     if not results['has_all_required_columns']:
+        logger.warning(f"Validation failed. Missing required columns: {missing_cols}")
         return results
 
     # 2. Basic Shape and Types
@@ -62,9 +63,8 @@ def validate_raw_data(df: pd.DataFrame) -> dict:
     results['fraud_rate'] = float(total_fraud / len(df)) if len(df) > 0 else 0.0
     
     # 10. isFraud vs isFlaggedFraud
-    # How many times both are 1, how many times one is 1 and other is 0
     crosstab = pd.crosstab(df['isFraud'], df['isFlaggedFraud'])
-    # Convert to dict cleanly
     results['fraud_vs_flagged'] = crosstab.to_dict()
     
+    logger.info(f"Validation completed successfully. Found {total_fraud} fraud cases ({results['fraud_rate']:.4%}).")
     return results

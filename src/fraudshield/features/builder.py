@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+from fraudshield.logging_config import setup_logger
+
+logger = setup_logger(__name__)
 
 def build_all_features(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -12,6 +15,7 @@ def build_all_features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: A new DataFrame with engineered features.
     """
+    logger.info("Starting feature engineering process...")
     # Create a copy to avoid SettingWithCopyWarning or mutating original df directly
     df = df.copy()
 
@@ -76,4 +80,5 @@ def build_all_features(df: pd.DataFrame) -> pd.DataFrame:
     # Fill remaining NaNs introduced by inf replacements with 0
     df.fillna(0, inplace=True)
     
+    logger.info(f"Feature engineering completed. Resulting shape: {df.shape}")
     return df

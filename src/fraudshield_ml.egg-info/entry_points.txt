@@ -1,0 +1,2 @@
+[console_scripts]
+fraudshield = fraudshield.cli:app

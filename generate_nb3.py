@@ -21,12 +21,12 @@ sns.set_theme(style="whitegrid")
 plt.rcParams['figure.figsize'] = (10, 6)
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..')))
-from src.data.load_data import load_raw_data
-from src.features.build_features import build_all_features
-from src.data.split_data import temporal_train_val_test_split
-from src.models.train_baseline import train_dummy_model, train_logistic_model, train_weighted_logistic_model
-from src.models.evaluate import evaluate_model
-from src.models.threshold_analysis import analyze_thresholds
+from fraudshield.data.loader import load_raw_data
+from fraudshield.features.builder import build_all_features
+from fraudshield.data.splitting import temporal_train_val_test_split
+from fraudshield.models.train_baseline import train_dummy_model, train_logistic_model, train_weighted_logistic_model
+from fraudshield.models.evaluate import evaluate_model
+from fraudshield.models.threshold_analysis import analyze_thresholds
 
 os.makedirs('../reports/figures', exist_ok=True)
 '''))

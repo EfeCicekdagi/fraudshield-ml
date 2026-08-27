@@ -7,8 +7,8 @@ import sys
 # Ensure src is in path to allow absolute imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.data.load_data import load_raw_data
-from src.data.validate_data import validate_raw_data
+from fraudshield.data.loader import load_raw_data
+from fraudshield.data.validation import validate_raw_data
 
 @pytest.fixture
 def dummy_data_path(tmp_path):

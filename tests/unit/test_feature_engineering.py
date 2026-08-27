@@ -5,7 +5,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.features.build_features import build_all_features
+from fraudshield.features.builder import build_all_features
 
 @pytest.fixture
 def sample_df():

@@ -4,7 +4,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.models.evaluate import evaluate_model
+from fraudshield.models.evaluate import evaluate_model
 
 def test_evaluate_model():
     y_true = np.array([0, 0, 1, 1, 0])

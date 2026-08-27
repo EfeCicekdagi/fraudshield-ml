@@ -4,7 +4,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.models.threshold_analysis import analyze_thresholds, compute_cost
+from fraudshield.models.threshold_analysis import analyze_thresholds, compute_cost
 
 def test_compute_cost():
     assert compute_cost(fp=10, fn=5, fp_cost=1, fn_cost=100) == 510
