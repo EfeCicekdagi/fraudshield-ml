@@ -1,0 +1,76 @@
+random_seed: 42
+objective: binary
+primary_metric: average_precision
+n_trials: 10
+tuning_max_rows: 500000
+inner_validation_ratio: 0.20
+early_stopping_rounds: 50
+data_config_path: configs/data.yaml
+model_artifact_dir: artifacts/runs
+report_dir: reports
+
+feature_sets:
+  core:
+    - step
+    - type
+    - amount
+    - oldbalanceOrg
+    - newbalanceOrig
+    - oldbalanceDest
+    - newbalanceDest
+  engineered:
+    - step
+    - type
+    - amount
+    - oldbalanceOrg
+    - newbalanceOrig
+    - oldbalanceDest
+    - newbalanceDest
+    - is_risky_type
+    - amount_log1p
+    - error_balance_orig
+    - error_balance_dest
+    - amount_to_oldbalance_orig_ratio
+    - dest_oldbalance_is_zero
+    - dest_newbalance_is_zero
+
+false_positive_cost: 1.0
+false_negative_cost: 10.0
+min_recall_targets: [0.80, 0.90]
+
+param_distributions:
+  learning_rate:
+    type: loguniform
+    low: 0.01
+    high: 0.3
+  num_leaves:
+    type: int
+    low: 20
+    high: 150
+  max_depth:
+    type: int
+    low: 5
+    high: 15
+  min_child_samples:
+    type: int
+    low: 20
+    high: 500
+  n_estimators:
+    type: categorical
+    choices: [200, 300, 500]
+  subsample:
+    type: uniform
+    low: 0.6
+    high: 1.0
+  colsample_bytree:
+    type: uniform
+    low: 0.6
+    high: 1.0
+  reg_alpha:
+    type: loguniform
+    low: 1.0e-8
+    high: 10.0
+  reg_lambda:
+    type: loguniform
+    low: 1.0e-8
+    high: 10.0

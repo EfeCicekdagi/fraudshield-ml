@@ -1,0 +1,76 @@
+{
+    "val_results": [
+        {
+            "model": "LightGBM_unweighted",
+            "feature_set": "core",
+            "metrics": {
+                "pr_auc": 0.6597427469823507,
+                "roc_auc": 0.9708436129650844,
+                "precision": 0.22459893048128343,
+                "recall": 0.6702127659574468,
+                "f1_score": 0.3364485981308411,
+                "accuracy": 0.998479216985443,
+                "tn": 978547,
+                "fp": 1305,
+                "fn": 186,
+                "tp": 378,
+                "alert_rate": 0.001716618251844115,
+                "alerts_per_1k": 1.716618251844115
+            }
+        },
+        {
+            "model": "LightGBM_weighted",
+            "feature_set": "core",
+            "metrics": {
+                "pr_auc": 0.464404811880759,
+                "roc_auc": 0.9990507386438994,
+                "precision": 0.04980062029242357,
+                "recall": 0.9964539007092199,
+                "f1_score": 0.09486032576588742,
+                "accuracy": 0.9890607660421699,
+                "tn": 969129,
+                "fp": 10723,
+                "fn": 2,
+                "tp": 562,
+                "alert_rate": 0.01151042006658398,
+                "alerts_per_1k": 11.51042006658398
+            }
+        },
+        {
+            "model": "LightGBM_unweighted",
+            "feature_set": "engineered",
+            "metrics": {
+                "pr_auc": 0.2567271571606231,
+                "roc_auc": 0.9303263373860803,
+                "precision": 0.17637102234258634,
+                "recall": 0.9237588652482269,
+                "f1_score": 0.2961910176236498,
+                "accuracy": 0.9974745414191527,
+                "tn": 977419,
+                "fp": 2433,
+                "fn": 43,
+                "tp": 521,
+                "alert_rate": 0.0030130067236764802,
+                "alerts_per_1k": 3.0130067236764804
+            }
+        },
+        {
+            "model": "LightGBM_weighted",
+            "feature_set": "engineered",
+            "metrics": {
+                "pr_auc": 0.9999999999999998,
+                "roc_auc": 1.0,
+                "precision": 0.9337748344370861,
+                "recall": 1.0,
+                "f1_score": 0.9657534246575342,
+                "accuracy": 0.9999592009922319,
+                "tn": 979812,
+                "fp": 40,
+                "fn": 0,
+                "tp": 564,
+                "alert_rate": 0.0006160650172987793,
+                "alerts_per_1k": 0.6160650172987794
+            }
+        }
+    ]
+}

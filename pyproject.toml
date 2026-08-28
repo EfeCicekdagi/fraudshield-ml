@@ -25,6 +25,10 @@ dependencies = [
 dev = [
     "pytest>=8.0,<9.0",
 ]
+boosting = [
+    "lightgbm>=4.0",
+    "optuna>=3.0"
+]
 
 [project.scripts]
 fraudshield = "fraudshield.cli:app"

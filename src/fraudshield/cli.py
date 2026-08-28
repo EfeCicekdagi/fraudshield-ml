@@ -99,5 +99,16 @@ def train_baseline(
     run_baseline_pipeline(str(config))
     logger.info("Baseline training pipeline finished.")
 
+@app.command()
+def train_lightgbm(
+    config: Path = typer.Option(..., "--config", "-c", help="Path to LightGBM config file (e.g., configs/lightgbm.yaml)")
+):
+    """Train LightGBM models with hyperparameter optimization."""
+    from fraudshield.pipelines.lightgbm_pipeline import run_lightgbm_pipeline
+    
+    logger.info("Starting LightGBM training pipeline...")
+    run_lightgbm_pipeline(str(config))
+    logger.info("LightGBM training pipeline finished.")
+
 if __name__ == "__main__":
     app()

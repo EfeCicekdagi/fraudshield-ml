@@ -37,3 +37,26 @@ class BaselineConfig(BaseModel):
         with open(path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
         return cls(**data)
+
+class LightGBMConfig(BaseModel):
+    random_seed: int
+    objective: str
+    primary_metric: str
+    n_trials: int
+    tuning_max_rows: int
+    inner_validation_ratio: float
+    early_stopping_rounds: int
+    data_config_path: Path
+    model_artifact_dir: Path
+    report_dir: Path
+    feature_sets: dict[str, list[str]]
+    false_positive_cost: float
+    false_negative_cost: float
+    min_recall_targets: list[float]
+    param_distributions: dict[str, dict]
+
+    @classmethod
+    def load_from_yaml(cls, path: str | Path) -> "LightGBMConfig":
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        return cls(**data)

@@ -29,6 +29,7 @@ Windows PowerShell:
 ```powershell
 .venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
+pip install -e ".[boosting]"
 ```
 
 ## Veri Seti
