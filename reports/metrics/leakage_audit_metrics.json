@@ -1,0 +1,289 @@
+{
+    "actual_features": [
+        "step",
+        "type",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "is_risky_type",
+        "amount_log1p",
+        "error_balance_orig",
+        "error_balance_dest",
+        "amount_to_oldbalance_orig_ratio",
+        "dest_oldbalance_is_zero",
+        "dest_newbalance_is_zero"
+    ],
+    "leakage_detected": false,
+    "label_shuffle": {
+        "pr_auc": 0.0006876996401891949,
+        "prevalence": 0.0005752660095306482
+    },
+    "ablation": {
+        "Minimal": {
+            "pr_auc": 0.188892988536009,
+            "roc_auc": 0.8206194741437723,
+            "precision": 0.004806188322953104,
+            "recall": 0.599290780141844,
+            "f1": 0.009535900691211735,
+            "threshold": 0.5,
+            "tp": 338,
+            "fp": 69988,
+            "fn": 226,
+            "tn": 909864,
+            "alerts_per_1k": 71.73077550753965
+        },
+        "Core": {
+            "pr_auc": 0.4435802212538879,
+            "roc_auc": 0.9974412114864764,
+            "precision": 0.048801667245571376,
+            "recall": 0.9964539007092199,
+            "f1": 0.09304635761589403,
+            "threshold": 0.5,
+            "tp": 562,
+            "fp": 10954,
+            "fn": 2,
+            "tn": 968898,
+            "alerts_per_1k": 11.746034336444938
+        },
+        "Engineered_No_Errors": {
+            "pr_auc": 0.930700656314324,
+            "roc_auc": 0.9995850437161115,
+            "precision": 0.5271535580524345,
+            "recall": 0.99822695035461,
+            "f1": 0.6899509803921569,
+            "threshold": 0.5,
+            "tp": 563,
+            "fp": 505,
+            "fn": 1,
+            "tn": 979347,
+            "alerts_per_1k": 1.0893335074090997
+        },
+        "Full_Engineered": {
+            "pr_auc": 0.9999999999999998,
+            "roc_auc": 1.0,
+            "precision": 0.9337748344370861,
+            "recall": 1.0,
+            "f1": 0.9657534246575342,
+            "threshold": 0.5,
+            "tp": 564,
+            "fp": 40,
+            "fn": 0,
+            "tn": 979812,
+            "alerts_per_1k": 0.6160650172987793
+        }
+    },
+    "risky_subset": {
+        "all": {
+            "pr_auc": 0.9999999999999998,
+            "roc_auc": 1.0,
+            "precision": 0.9337748344370861,
+            "recall": 1.0,
+            "f1": 0.9657534246575342,
+            "threshold": 0.5,
+            "tp": 564,
+            "fp": 40,
+            "fn": 0,
+            "tn": 979812,
+            "alerts_per_1k": 0.6160650172987793
+        },
+        "risky": {
+            "pr_auc": 0.9999999999999999,
+            "roc_auc": 1.0,
+            "precision": 0.9353233830845771,
+            "recall": 1.0,
+            "f1": 0.9665809768637532,
+            "threshold": 0.5,
+            "tp": 564,
+            "fp": 39,
+            "fn": 0,
+            "tn": 427388,
+            "alerts_per_1k": 1.4089081312457505
+        }
+    },
+    "dominance": {
+        "gain": [
+            {
+                "feature": "error_balance_orig",
+                "gain": 1814584779.460944
+            },
+            {
+                "feature": "newbalanceOrig",
+                "gain": 810197037.6957436
+            },
+            {
+                "feature": "amount",
+                "gain": 45319754.57664035
+            },
+            {
+                "feature": "oldbalanceDest",
+                "gain": 18669544.14480395
+            },
+            {
+                "feature": "error_balance_dest",
+                "gain": 14405407.234958962
+            },
+            {
+                "feature": "step",
+                "gain": 4137976.7397699337
+            },
+            {
+                "feature": "type_CASH_OUT",
+                "gain": 2194291.732726736
+            },
+            {
+                "feature": "newbalanceDest",
+                "gain": 620136.5786304623
+            },
+            {
+                "feature": "oldbalanceOrg",
+                "gain": 549033.6508498248
+            },
+            {
+                "feature": "amount_log1p",
+                "gain": 264063.1675363481
+            },
+            {
+                "feature": "amount_to_oldbalance_orig_ratio",
+                "gain": 164391.1291348189
+            },
+            {
+                "feature": "type_TRANSFER",
+                "gain": 47775.128606945276
+            },
+            {
+                "feature": "dest_oldbalance_is_zero",
+                "gain": 20236.49189054966
+            },
+            {
+                "feature": "is_risky_type",
+                "gain": 18106.980024456978
+            },
+            {
+                "feature": "type_DEBIT",
+                "gain": 2521.638119459152
+            }
+        ],
+        "permutation": [
+            {
+                "feature": "error_balance_orig",
+                "importance": 0.9769272878109663
+            },
+            {
+                "feature": "newbalanceOrig",
+                "importance": 0.8027218502064437
+            },
+            {
+                "feature": "error_balance_dest",
+                "importance": 0.13672493650835768
+            },
+            {
+                "feature": "oldbalanceDest",
+                "importance": 0.07065929573042203
+            },
+            {
+                "feature": "oldbalanceOrg",
+                "importance": 0.0058046594982079204
+            },
+            {
+                "feature": "amount",
+                "importance": 0.0006671610431344011
+            },
+            {
+                "feature": "dest_newbalance_is_zero",
+                "importance": 8.881784197001253e-17
+            },
+            {
+                "feature": "is_risky_type",
+                "importance": 6.661338147750939e-17
+            },
+            {
+                "feature": "amount_log1p",
+                "importance": 6.661338147750939e-17
+            },
+            {
+                "feature": "amount_to_oldbalance_orig_ratio",
+                "importance": 6.661338147750939e-17
+            },
+            {
+                "feature": "type",
+                "importance": 4.4408920985006264e-17
+            },
+            {
+                "feature": "newbalanceDest",
+                "importance": 2.2204460492503132e-17
+            },
+            {
+                "feature": "dest_oldbalance_is_zero",
+                "importance": 2.2204460492503132e-17
+            },
+            {
+                "feature": "step",
+                "importance": 0.0
+            }
+        ]
+    },
+    "perturbation": {
+        "base": {
+            "pr_auc": 0.9999999999999998,
+            "recall": 1.0
+        },
+        "zero_error": {
+            "pr_auc": 0.006878028684847424,
+            "recall": 1.0
+        },
+        "noise_error": {
+            "pr_auc": 0.11780458290543695,
+            "recall": 0.6329787234042553
+        },
+        "drop_derived": {
+            "pr_auc": 0.0006694870621282815,
+            "recall": 1.0
+        }
+    },
+    "temporal_stability": {
+        "early": {
+            "pr_auc": 1.0,
+            "roc_auc": 1.0,
+            "precision": 0.9191919191919192,
+            "recall": 1.0,
+            "f1": 0.9578947368421054,
+            "threshold": 0.5,
+            "tp": 182,
+            "fp": 16,
+            "fn": 0,
+            "tn": 321883,
+            "alerts_per_1k": 0.6147521896665745,
+            "fraud_count": 182
+        },
+        "middle": {
+            "pr_auc": 1.0,
+            "roc_auc": 1.0,
+            "precision": 0.9406392694063926,
+            "recall": 1.0,
+            "f1": 0.9694117647058823,
+            "threshold": 0.5,
+            "tp": 206,
+            "fp": 13,
+            "fn": 0,
+            "tn": 400184,
+            "alerts_per_1k": 0.546948948933949,
+            "fraud_count": 206
+        },
+        "late": {
+            "pr_auc": 1.0,
+            "roc_auc": 1.0,
+            "precision": 0.9473684210526315,
+            "recall": 1.0,
+            "f1": 0.972972972972973,
+            "threshold": 0.5,
+            "tp": 198,
+            "fp": 11,
+            "fn": 0,
+            "tn": 261245,
+            "alerts_per_1k": 0.7993757984196073,
+            "fraud_count": 198
+        }
+    }
+}
