@@ -27,9 +27,14 @@ python -m venv .venv
 
 Windows PowerShell:
 ```powershell
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
+
+# For LightGBM support (Phase 4):
 pip install -e ".[boosting]"
+
+# For Deep Learning / PyTorch support (Phase 5):
+pip install -e ".[deep-learning]"
 ```
 
 ## Veri Seti

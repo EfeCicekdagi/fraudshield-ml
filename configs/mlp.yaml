@@ -1,0 +1,49 @@
+random_seed: 42
+device: auto
+batch_size: 4096
+num_workers: 0  # safe default for Windows
+max_epochs: 50
+patience: 5
+learning_rate: 0.001
+weight_decay: 0.01
+hidden_dimensions: [128, 64, 32]
+dropout: 0.2
+activation: "relu"
+batch_norm: true
+gradient_clip_norm: 1.0
+loss_type: "weighted_bce"
+focal_loss_alpha: 0.25
+focal_loss_gamma: 2.0
+tuning_trials: 10
+tuning_max_rows: 500000
+inner_validation_ratio: 0.2
+
+data_config_path: "configs/data.yaml"
+model_artifact_dir: "artifacts/runs"
+report_dir: "reports"
+
+false_positive_cost: 1.0
+false_negative_cost: 10.0
+min_recall_targets: [0.8, 0.9]
+
+feature_sets:
+  core:
+    - step
+    - type
+    - amount
+    - oldbalanceOrg
+  engineered:
+    - step
+    - type
+    - amount
+    - oldbalanceOrg
+    - newbalanceOrig
+    - oldbalanceDest
+    - newbalanceDest
+    - is_risky_type
+    - amount_log1p
+    - error_balance_orig
+    - error_balance_dest
+    - amount_to_oldbalance_orig_ratio
+    - dest_oldbalance_is_zero
+    - dest_newbalance_is_zero

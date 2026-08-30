@@ -1,0 +1,339 @@
+[
+    {
+        "model": "Engineered + Focal Loss",
+        "feature_set": "engineered",
+        "metrics": {
+            "pr_auc": 0.8033028356241763,
+            "roc_auc": 0.9985105056247748,
+            "precision": 0.9803439803439803,
+            "recall": 0.7074468085106383,
+            "f1_score": 0.8218331616889805,
+            "accuracy": 0.9998235442914029,
+            "tn": 979844,
+            "fp": 8,
+            "fn": 165,
+            "tp": 399,
+            "alert_rate": 0.00041512990404073374,
+            "alerts_per_1k": 0.41512990404073374
+        },
+        "threshold": 0.2457987517118454,
+        "tp": 399,
+        "fp": 8,
+        "fn": 165,
+        "tn": 979844,
+        "alerts_per_1k": 0.41512990404073374,
+        "training_time_seconds": 2401.61247754097,
+        "best_epoch": 19,
+        "architecture": {
+            "random_seed": 42,
+            "device": "auto",
+            "batch_size": 4096,
+            "num_workers": 0,
+            "max_epochs": 50,
+            "patience": 5,
+            "learning_rate": 0.00432543242796456,
+            "weight_decay": 0.027728241828010616,
+            "hidden_dimensions": [
+                128,
+                64,
+                32
+            ],
+            "dropout": 0.21355389431312816,
+            "activation": "relu",
+            "batch_norm": true,
+            "gradient_clip_norm": 1.0,
+            "loss_type": "focal_loss",
+            "focal_loss_alpha": 0.25,
+            "focal_loss_gamma": 2.0,
+            "tuning_trials": 10,
+            "tuning_max_rows": 500000,
+            "inner_validation_ratio": 0.2,
+            "data_config_path": "configs\\data.yaml",
+            "model_artifact_dir": "artifacts\\runs",
+            "report_dir": "reports",
+            "feature_sets": {
+                "core": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg"
+                ],
+                "engineered": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg",
+                    "newbalanceOrig",
+                    "oldbalanceDest",
+                    "newbalanceDest",
+                    "is_risky_type",
+                    "amount_log1p",
+                    "error_balance_orig",
+                    "error_balance_dest",
+                    "amount_to_oldbalance_orig_ratio",
+                    "dest_oldbalance_is_zero",
+                    "dest_newbalance_is_zero"
+                ]
+            },
+            "false_positive_cost": 1.0,
+            "false_negative_cost": 10.0,
+            "min_recall_targets": [
+                0.8,
+                0.9
+            ],
+            "n_layers": 3
+        }
+    },
+    {
+        "model": "Engineered + Weighted BCE",
+        "feature_set": "engineered",
+        "metrics": {
+            "pr_auc": 0.81458352700816,
+            "roc_auc": 0.998663112258117,
+            "precision": 0.9603729603729604,
+            "recall": 0.7304964539007093,
+            "f1_score": 0.8298086606243705,
+            "accuracy": 0.9998276241921796,
+            "tn": 979835,
+            "fp": 17,
+            "fn": 152,
+            "tp": 412,
+            "alert_rate": 0.00043756935831320583,
+            "alerts_per_1k": 0.4375693583132058
+        },
+        "threshold": 0.9966465830802917,
+        "tp": 412,
+        "fp": 17,
+        "fn": 152,
+        "tn": 979835,
+        "alerts_per_1k": 0.4375693583132058,
+        "training_time_seconds": 1104.0019314289093,
+        "best_epoch": -1,
+        "architecture": {
+            "random_seed": 42,
+            "device": "auto",
+            "batch_size": 4096,
+            "num_workers": 0,
+            "max_epochs": 50,
+            "patience": 5,
+            "learning_rate": 0.00432543242796456,
+            "weight_decay": 0.027728241828010616,
+            "hidden_dimensions": [
+                128,
+                64,
+                32
+            ],
+            "dropout": 0.21355389431312816,
+            "activation": "relu",
+            "batch_norm": true,
+            "gradient_clip_norm": 1.0,
+            "loss_type": "weighted_bce",
+            "focal_loss_alpha": 0.25,
+            "focal_loss_gamma": 2.0,
+            "tuning_trials": 10,
+            "tuning_max_rows": 500000,
+            "inner_validation_ratio": 0.2,
+            "data_config_path": "configs\\data.yaml",
+            "model_artifact_dir": "artifacts\\runs",
+            "report_dir": "reports",
+            "feature_sets": {
+                "core": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg"
+                ],
+                "engineered": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg",
+                    "newbalanceOrig",
+                    "oldbalanceDest",
+                    "newbalanceDest",
+                    "is_risky_type",
+                    "amount_log1p",
+                    "error_balance_orig",
+                    "error_balance_dest",
+                    "amount_to_oldbalance_orig_ratio",
+                    "dest_oldbalance_is_zero",
+                    "dest_newbalance_is_zero"
+                ]
+            },
+            "false_positive_cost": 1.0,
+            "false_negative_cost": 10.0,
+            "min_recall_targets": [
+                0.8,
+                0.9
+            ]
+        }
+    },
+    {
+        "model": "Core + Focal Loss",
+        "feature_set": "core",
+        "metrics": {
+            "pr_auc": 0.5952326350115624,
+            "roc_auc": 0.9968924303534276,
+            "precision": 0.7731343283582089,
+            "recall": 0.4592198581560284,
+            "f1_score": 0.5761957730812013,
+            "accuracy": 0.9996113894510086,
+            "tn": 979776,
+            "fp": 76,
+            "fn": 305,
+            "tp": 259,
+            "alert_rate": 0.00034169169005809777,
+            "alerts_per_1k": 0.3416916900580978
+        },
+        "threshold": 0.3619685471057892,
+        "tp": 259,
+        "fp": 76,
+        "fn": 305,
+        "tn": 979776,
+        "alerts_per_1k": 0.3416916900580978,
+        "training_time_seconds": 1546.7198286056519,
+        "best_epoch": -1,
+        "architecture": {
+            "random_seed": 42,
+            "device": "auto",
+            "batch_size": 4096,
+            "num_workers": 0,
+            "max_epochs": 50,
+            "patience": 5,
+            "learning_rate": 0.003482846706526885,
+            "weight_decay": 0.0009444574254983562,
+            "hidden_dimensions": [
+                32,
+                256,
+                256
+            ],
+            "dropout": 0.2806385987847481,
+            "activation": "gelu",
+            "batch_norm": true,
+            "gradient_clip_norm": 1.0,
+            "loss_type": "focal_loss",
+            "focal_loss_alpha": 0.25,
+            "focal_loss_gamma": 2.0,
+            "tuning_trials": 10,
+            "tuning_max_rows": 500000,
+            "inner_validation_ratio": 0.2,
+            "data_config_path": "configs\\data.yaml",
+            "model_artifact_dir": "artifacts\\runs",
+            "report_dir": "reports",
+            "feature_sets": {
+                "core": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg"
+                ],
+                "engineered": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg",
+                    "newbalanceOrig",
+                    "oldbalanceDest",
+                    "newbalanceDest",
+                    "is_risky_type",
+                    "amount_log1p",
+                    "error_balance_orig",
+                    "error_balance_dest",
+                    "amount_to_oldbalance_orig_ratio",
+                    "dest_oldbalance_is_zero",
+                    "dest_newbalance_is_zero"
+                ]
+            },
+            "false_positive_cost": 1.0,
+            "false_negative_cost": 10.0,
+            "min_recall_targets": [
+                0.8,
+                0.9
+            ]
+        }
+    },
+    {
+        "model": "Core + Weighted BCE",
+        "feature_set": "core",
+        "metrics": {
+            "pr_auc": 0.647699751176082,
+            "roc_auc": 0.998005873763017,
+            "precision": 0.6980306345733042,
+            "recall": 0.5656028368794326,
+            "f1_score": 0.6248775710088148,
+            "accuracy": 0.9996093495006202,
+            "tn": 979714,
+            "fp": 138,
+            "fn": 245,
+            "tp": 319,
+            "alert_rate": 0.00046612866375089757,
+            "alerts_per_1k": 0.46612866375089756
+        },
+        "threshold": 0.9958524703979492,
+        "tp": 319,
+        "fp": 138,
+        "fn": 245,
+        "tn": 979714,
+        "alerts_per_1k": 0.46612866375089756,
+        "training_time_seconds": 1967.7466404438019,
+        "best_epoch": -1,
+        "architecture": {
+            "random_seed": 42,
+            "device": "auto",
+            "batch_size": 4096,
+            "num_workers": 0,
+            "max_epochs": 50,
+            "patience": 5,
+            "learning_rate": 0.003482846706526885,
+            "weight_decay": 0.0009444574254983562,
+            "hidden_dimensions": [
+                32,
+                256,
+                256
+            ],
+            "dropout": 0.2806385987847481,
+            "activation": "gelu",
+            "batch_norm": true,
+            "gradient_clip_norm": 1.0,
+            "loss_type": "weighted_bce",
+            "focal_loss_alpha": 0.25,
+            "focal_loss_gamma": 2.0,
+            "tuning_trials": 10,
+            "tuning_max_rows": 500000,
+            "inner_validation_ratio": 0.2,
+            "data_config_path": "configs\\data.yaml",
+            "model_artifact_dir": "artifacts\\runs",
+            "report_dir": "reports",
+            "feature_sets": {
+                "core": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg"
+                ],
+                "engineered": [
+                    "step",
+                    "type",
+                    "amount",
+                    "oldbalanceOrg",
+                    "newbalanceOrig",
+                    "oldbalanceDest",
+                    "newbalanceDest",
+                    "is_risky_type",
+                    "amount_log1p",
+                    "error_balance_orig",
+                    "error_balance_dest",
+                    "amount_to_oldbalance_orig_ratio",
+                    "dest_oldbalance_is_zero",
+                    "dest_newbalance_is_zero"
+                ]
+            },
+            "false_positive_cost": 1.0,
+            "false_negative_cost": 10.0,
+            "min_recall_targets": [
+                0.8,
+                0.9
+            ]
+        }
+    }
+]

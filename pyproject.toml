@@ -29,6 +29,9 @@ boosting = [
     "lightgbm>=4.0",
     "optuna>=3.0"
 ]
+deep-learning = [
+    "torch"
+]
 
 [project.scripts]
 fraudshield = "fraudshield.cli:app"

@@ -60,3 +60,37 @@ class LightGBMConfig(BaseModel):
         with open(path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
         return cls(**data)
+
+class MLPConfig(BaseModel):
+    random_seed: int
+    device: str
+    batch_size: int
+    num_workers: int
+    max_epochs: int
+    patience: int
+    learning_rate: float
+    weight_decay: float
+    hidden_dimensions: list[int]
+    dropout: float
+    activation: str
+    batch_norm: bool
+    gradient_clip_norm: float
+    loss_type: str
+    focal_loss_alpha: float
+    focal_loss_gamma: float
+    tuning_trials: int
+    tuning_max_rows: int
+    inner_validation_ratio: float
+    data_config_path: Path
+    model_artifact_dir: Path
+    report_dir: Path
+    feature_sets: dict[str, list[str]]
+    false_positive_cost: float
+    false_negative_cost: float
+    min_recall_targets: list[float]
+
+    @classmethod
+    def load_from_yaml(cls, path: str | Path) -> "MLPConfig":
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        return cls(**data)

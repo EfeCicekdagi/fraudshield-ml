@@ -110,5 +110,21 @@ def train_lightgbm(
     run_lightgbm_pipeline(str(config))
     logger.info("LightGBM training pipeline finished.")
 
+@app.command()
+def train_mlp(
+    config: Path = typer.Option(
+        "configs/mlp.yaml",
+        help="Path to the MLP training config file"
+    )
+):
+    """
+    Trains PyTorch MLP Deep Learning models and hyperparameter tuning using Optuna.
+    """
+    from fraudshield.pipelines.mlp_pipeline import run_mlp_pipeline
+    
+    logger.info("Starting MLP training pipeline...")
+    run_mlp_pipeline(str(config))
+    logger.info("MLP training pipeline finished.")
+
 if __name__ == "__main__":
     app()

@@ -1,6 +1,6 @@
 # LightGBM Training and Tuning Report
-**Run ID:** 20260828_223238_a40d33
-**Date:** 2026-08-28 22:35:08
+**Run ID:** 20260828_230111_725bd4
+**Date:** 2026-08-28 23:03:41
 
 ## Summary of Best Model
 - **Model Variant:** LightGBM_weighted
