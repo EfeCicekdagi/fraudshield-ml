@@ -1,0 +1,56 @@
+random_seed: 42
+target_column: "isFraud"
+temporal_column: "step"
+data_config_path: "configs/data.yaml"
+
+final_artifact_dir: "artifacts/final"
+report_dir: "reports"
+
+# 1. Feature sets
+feature_sets:
+  pre_transaction:
+    - "step"
+    - "hour_of_day"
+    - "day"
+    - "type"
+    - "amount"
+    - "amount_log1p"
+    - "is_risky_type"
+    - "oldbalanceOrg"
+    - "orig_oldbalance_is_zero"
+    - "amount_to_oldbalance_orig_ratio"
+    - "orig_account_type"
+    - "dest_account_type"
+
+# 2. Candidate Models Config
+candidates:
+  sgd:
+    loss: "log_loss"
+    penalty: "elasticnet"
+    alpha: 0.0001
+  lightgbm:
+    learning_rate: 0.05
+    num_leaves: 31
+    max_depth: -1
+    n_estimators: 300
+    subsample: 0.8
+    colsample_bytree: 0.8
+  mlp:
+    hidden_dimensions: [128, 64, 32]
+    dropout: 0.2135
+    learning_rate: 0.0043
+    batch_size: 4096
+    epochs: 10
+    loss: "weighted_bce"
+
+# 3. Model Selection
+inner_validation_ratio: 0.20 # Inner split of outer_train
+
+# 4. Final Training and Calibration
+outer_validation_calibration_ratio: 0.50 # Splits outer_val into 50% calib, 50% decision
+false_positive_cost: 1
+false_negative_cost: 100
+min_recall_targets: [0.80, 0.90]
+
+# 5. Risk Levels
+# Will be determined by mapped thresholds

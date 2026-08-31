@@ -126,5 +126,21 @@ def train_mlp(
     run_mlp_pipeline(str(config))
     logger.info("MLP training pipeline finished.")
 
+@app.command()
+def finalize_model(
+    config: Path = typer.Option(
+        "configs/final_model.yaml",
+        help="Path to the finalization config file"
+    )
+):
+    """
+    Executes the final model selection, calibration, thresholding, and locked test evaluation.
+    """
+    from fraudshield.pipelines.finalization_pipeline import run_finalization_pipeline
+    
+    logger.info("Starting Finalization pipeline...")
+    run_finalization_pipeline(str(config))
+    logger.info("Finalization pipeline finished.")
+
 if __name__ == "__main__":
     app()
