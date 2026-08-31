@@ -360,13 +360,12 @@ def generate_final_reports(report_dir, test_m, rule_m, hyb_m, inner_m, champ, ca
         "- Calibration split step range: *Missing*",
         "- Decision split step range: *Missing*",
         "",
-        "## Risk Boundaries",
+        "## Configurable Policy Risk Boundaries",
+        "*(Not empirically derived from validation data)*",
         f"- LOW: <= {risk['LOW_MAX']:.4f}",
         f"- MEDIUM: {risk['LOW_MAX']:.4f} < score <= {risk['MEDIUM_MAX']:.4f}",
         f"- HIGH: {risk['MEDIUM_MAX']:.4f} < score <= {risk['HIGH_MAX']:.4f}",
         f"- CRITICAL: > {risk['HIGH_MAX']:.4f}",
-        "",
-        "*(Note: Transaction counts and empirical fraud rates per bucket were not saved as artifacts and test set rescoring is forbidden.)*"
     ])
     with open(rep, "w") as f: f.write("\n".join(lines))
     

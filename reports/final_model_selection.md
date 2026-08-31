@@ -18,10 +18,9 @@
 - Calibration split step range: *Missing*
 - Decision split step range: *Missing*
 
-## Risk Boundaries
+## Configurable Policy Risk Boundaries
+*(Not empirically derived from validation data)*
 - LOW: <= 0.1000
 - MEDIUM: 0.1000 < score <= 0.3000
 - HIGH: 0.3000 < score <= 0.5000
 - CRITICAL: > 0.5000
-
-*(Note: Transaction counts and empirical fraud rates per bucket were not saved as artifacts and test set rescoring is forbidden.)*
