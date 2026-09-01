@@ -19,6 +19,11 @@ python-multipart
 lightgbm>=4.0
 optuna>=3.0
 
+[dashboard]
+streamlit>=1.30.0
+sqlalchemy>=2.0.0
+requests>=2.31.0
+
 [deep-learning]
 torch
 

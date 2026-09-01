@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from fraudshield.api.routers import health, prediction, model_info
+from fraudshield.api.routers import health, prediction, model_info, cases
 from fraudshield.api.middleware import add_request_id_middleware
 from fraudshield.api.error_handlers import register_error_handlers
 from fraudshield.api.dependencies import init_predictor
+from fraudshield.api.db import init_db
 from fraudshield.logging_config import setup_logger
 
 logger = setup_logger(__name__)
@@ -13,6 +14,8 @@ logger = setup_logger(__name__)
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting up FastAPI application...")
+    # Initialize DB
+    init_db()
     # Initialize the predictor once
     try:
         predictor = init_predictor()
@@ -53,5 +56,6 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(model_info.router, prefix="/api/v1")
     app.include_router(prediction.router, prefix="/api/v1")
+    app.include_router(cases.router, prefix="/api/v1")
     
     return app

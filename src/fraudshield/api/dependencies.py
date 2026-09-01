@@ -14,7 +14,7 @@ api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 def get_api_key(api_key_header: str = Security(api_key_header)):
     expected_api_key = os.environ.get("FRAUDSHIELD_API_KEY")
     if expected_api_key:
-        if hmac.compare_digest(api_key_header, expected_api_key):
+        if api_key_header is not None and hmac.compare_digest(api_key_header, expected_api_key):
             return api_key_header
         else:
             raise HTTPException(

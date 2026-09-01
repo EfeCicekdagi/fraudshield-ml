@@ -36,8 +36,8 @@ pip install -e ".[boosting]"
 # For Deep Learning / PyTorch support (Phase 5):
 pip install -e ".[deep-learning]"
 
-# For API and Explainability support (Phase 8):
-pip install -e ".[deep-learning,explainability,api]"
+# For API and Dashboard (Phase 8 & 9)
+pip install -e ".[api,dashboard]"
 ```
 
 ## Veri Seti
@@ -88,11 +88,25 @@ pytest
 8. ~~Production-Oriented FastAPI Inference Service~~ (Tamamlandı)
 9. Streamlit dashboard (Planlanıyor)
 
-## API Kullanımı
+## Çalıştırma (Inference API ve Dashboard)
 
-Bu proje, production-oriented inference API sunmaktadır. API dökümantasyonu için `docs/api.md` dosyasına bakabilirsiniz. Sunucu çalışırken `/docs` adresinden OpenAPI arayüzüne ulaşabilirsiniz.
+Bu proje, production-oriented inference API ve analist operasyonları için bir Streamlit Dashboard sunmaktadır. Dashboard tamamen API-driven olup, hiçbir model objesini belleğe doğrudan yüklemez.
 
-> **Uyarı:** `orig_account_type` ve `dest_account_type` gibi alanlar upstream (güvenilir) sistemler tarafından doğrulanmalı veya üretilmelidir. Halka açık (untrusted) istemcilerden doğrudan gelen bu verilere güvenilmemelidir. API key mekanizması da demo/servis doğrulaması amacı taşır, gerçek bir bankacılık güvenliği için yeterli değildir.
+> **Uyarı:** `orig_account_type` ve `dest_account_type` gibi alanlar upstream (güvenilir) sistemler tarafından doğrulanmalı veya üretilmelidir. Halka açık (untrusted) istemcilerden doğrudan gelen bu verilere güvenilmemelidir. 
+
+**API ve Dashboard'u Başlatma (İki ayrı terminalde çalıştırın):**
+
+Terminal 1 (Backend API):
+```powershell
+$env:FRAUDSHIELD_API_KEY="my-secret-key"
+fraudshield serve
+```
+
+Terminal 2 (Streamlit Dashboard):
+```powershell
+$env:FRAUDSHIELD_API_KEY="my-secret-key"
+fraudshield dashboard --api-url http://127.0.0.1:8000/api/v1
+```
 
 **Örnek (PowerShell):**
 ```powershell

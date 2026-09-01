@@ -29,6 +29,10 @@ Requires-Dist: fastapi; extra == "api"
 Requires-Dist: uvicorn[standard]; extra == "api"
 Requires-Dist: httpx; extra == "api"
 Requires-Dist: python-multipart; extra == "api"
+Provides-Extra: dashboard
+Requires-Dist: streamlit>=1.30.0; extra == "dashboard"
+Requires-Dist: sqlalchemy>=2.0.0; extra == "dashboard"
+Requires-Dist: requests>=2.31.0; extra == "dashboard"
 Dynamic: license-file
 
 # FraudShield ML
@@ -68,6 +72,9 @@ pip install -e ".[boosting]"
 
 # For Deep Learning / PyTorch support (Phase 5):
 pip install -e ".[deep-learning]"
+
+# For API and Explainability support (Phase 8):
+pip install -e ".[deep-learning,explainability,api]"
 ```
 
 ## Veri Seti
@@ -92,6 +99,10 @@ fraudshield build-features --config configs/data.yaml
 
 # Veriyi zaman serisine göre Train/Val/Test olarak böl
 fraudshield split-data --config configs/data.yaml
+
+# Inference API Sunucusunu Başlat
+fraudshield serve --host 127.0.0.1 --port 8000
+# Alternatif: uvicorn fraudshield.api.app:create_app --factory
 ```
 
 ## Testlerin Çalıştırılması
@@ -107,8 +118,24 @@ pytest
 1. ~~Veri doğrulama ve keşifçi veri analizi~~ (Tamamlandı)
 2. ~~Feature engineering ve Temporal Split~~ (Tamamlandı)
 3. ~~Baseline model karşılaştırmaları~~ (Tamamlandı)
-4. Dengesiz veri ve threshold optimizasyonunun geliştirilmesi (Planlanıyor)
-5. Deep learning / Gelişmiş Ağaç modelleri (XGBoost vs.)
-6. Açıklanabilir risk skoru (SHAP vs.)
-7. FastAPI servis katmanı
-8. Streamlit dashboard
+4. ~~LightGBM optimizasyonları~~ (Tamamlandı)
+5. ~~Deep Learning (PyTorch MLP) entegrasyonu~~ (Tamamlandı)
+6. ~~Threshold ve Calibration ayarlamaları~~ (Tamamlandı)
+7. ~~Version-Independent Inference Bundle~~ (Tamamlandı)
+8. ~~Production-Oriented FastAPI Inference Service~~ (Tamamlandı)
+9. Streamlit dashboard (Planlanıyor)
+
+## API Kullanımı
+
+Bu proje, production-oriented inference API sunmaktadır. API dökümantasyonu için `docs/api.md` dosyasına bakabilirsiniz. Sunucu çalışırken `/docs` adresinden OpenAPI arayüzüne ulaşabilirsiniz.
+
+> **Uyarı:** `orig_account_type` ve `dest_account_type` gibi alanlar upstream (güvenilir) sistemler tarafından doğrulanmalı veya üretilmelidir. Halka açık (untrusted) istemcilerden doğrudan gelen bu verilere güvenilmemelidir. API key mekanizması da demo/servis doğrulaması amacı taşır, gerçek bir bankacılık güvenliği için yeterli değildir.
+
+**Örnek (PowerShell):**
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/predict" `
+  -Method Post `
+  -Headers @{"X-API-Key"="your-secret-key"} `
+  -Body '{"step":1,"type":"PAYMENT","amount":100,"oldbalanceOrg":1000,"orig_account_type":"C","dest_account_type":"M"}' `
+  -ContentType "application/json"
+```

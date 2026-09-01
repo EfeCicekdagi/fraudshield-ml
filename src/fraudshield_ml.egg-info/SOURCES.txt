@@ -4,6 +4,15 @@ pyproject.toml
 src/fraudshield/__init__.py
 src/fraudshield/cli.py
 src/fraudshield/logging_config.py
+src/fraudshield/api/__init__.py
+src/fraudshield/api/app.py
+src/fraudshield/api/dependencies.py
+src/fraudshield/api/error_handlers.py
+src/fraudshield/api/middleware.py
+src/fraudshield/api/routers/__init__.py
+src/fraudshield/api/routers/health.py
+src/fraudshield/api/routers/model_info.py
+src/fraudshield/api/routers/prediction.py
 src/fraudshield/data/__init__.py
 src/fraudshield/data/loader.py
 src/fraudshield/data/splitting.py
@@ -48,6 +57,7 @@ src/fraudshield_ml.egg-info/dependency_links.txt
 src/fraudshield_ml.egg-info/entry_points.txt
 src/fraudshield_ml.egg-info/requires.txt
 src/fraudshield_ml.egg-info/top_level.txt
+tests/test_api.py
 tests/test_finalization.py
 tests/test_inference_parity.py
 tests/test_leakage_audit.py

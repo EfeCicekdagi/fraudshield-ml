@@ -235,5 +235,23 @@ def serve(
         factory=True
     )
 
+@app.command()
+def dashboard(
+    api_url: str = typer.Option("http://127.0.0.1:8000/api/v1", help="URL of the FastAPI service")
+):
+    """Start the Streamlit Operational Dashboard."""
+    import os
+    import subprocess
+    
+    os.environ["FRAUDSHIELD_API_URL"] = api_url
+    
+    dashboard_path = Path(__file__).parent / "dashboard" / "app.py"
+    if not dashboard_path.exists():
+        logger.error("Dashboard app.py not found.")
+        raise typer.Exit(code=1)
+        
+    logger.info(f"Starting Streamlit dashboard pointing to API: {api_url}")
+    subprocess.run(["streamlit", "run", str(dashboard_path)])
+
 if __name__ == "__main__":
     app()
