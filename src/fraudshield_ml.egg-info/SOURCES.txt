@@ -8,12 +8,15 @@ src/fraudshield/data/__init__.py
 src/fraudshield/data/loader.py
 src/fraudshield/data/splitting.py
 src/fraudshield/data/validation.py
+src/fraudshield/explainability/reason_codes.py
 src/fraudshield/features/__init__.py
 src/fraudshield/features/availability.py
 src/fraudshield/features/builder.py
 src/fraudshield/features/preprocessing.py
 src/fraudshield/inference/model_loader.py
+src/fraudshield/inference/predictor.py
 src/fraudshield/inference/schemas.py
+src/fraudshield/inference/stable_components.py
 src/fraudshield/models/__init__.py
 src/fraudshield/models/audit.py
 src/fraudshield/models/calibration.py
@@ -46,6 +49,8 @@ src/fraudshield_ml.egg-info/entry_points.txt
 src/fraudshield_ml.egg-info/requires.txt
 src/fraudshield_ml.egg-info/top_level.txt
 tests/test_finalization.py
+tests/test_inference_parity.py
 tests/test_leakage_audit.py
 tests/test_lightgbm.py
 tests/test_mlp.py
+tests/test_private_api_ban.py

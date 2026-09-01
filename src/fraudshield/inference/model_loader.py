@@ -91,7 +91,7 @@ class ModelEnvironment:
             prep_meta = json.load(f)
         
         import numpy as np
-        prep_arrays = np.load(base_path / expected_files["preprocessor_arrays"])
+        prep_arrays = np.load(base_path / expected_files["preprocessor_arrays"], allow_pickle=False)
         self.preprocessor = StablePreprocessor(prep_meta, prep_arrays)
         
         # Validation checks
@@ -103,7 +103,7 @@ class ModelEnvironment:
             raise ValueError("Risk boundaries are not monotonically ordered.")
             
         # Infer MLP Architecture from state_dict
-        state_dict = torch.load(base_path / expected_files["model_state"], map_location='cpu')
+        state_dict = torch.load(base_path / expected_files["model_state"], map_location='cpu', weights_only=True)
         
         # We know it's a sequence of Linear -> BatchNorm -> GELU/ReLU -> Dropout
         # We can extract the hidden dimensions by looking at the weights of the Linear layers.

@@ -216,5 +216,24 @@ def model_info(
     print("Intended Use: Real-time pre-transaction fraud scoring.")
     print("Known Limitations: Not a completely independent holdout prediction (Phase 3 evaluation leakage). Synthetic PaySim artifacts excluded.")
 
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", help="Host IP to bind to"),
+    port: int = typer.Option(8000, help="Port to bind to"),
+    workers: int = typer.Option(1, help="Number of worker processes"),
+    log_level: str = typer.Option("info", help="Log level")
+):
+    """Start the FastAPI Production Inference Service."""
+    import uvicorn
+    logger.info(f"Starting API on {host}:{port} with {workers} workers")
+    uvicorn.run(
+        "fraudshield.api.app:create_app",
+        host=host,
+        port=port,
+        workers=workers,
+        log_level=log_level.lower(),
+        factory=True
+    )
+
 if __name__ == "__main__":
     app()

@@ -19,7 +19,7 @@ To resolve both the incompatibility and the security risks associated with loadi
 
 1. **Extraction:** A migration script reads the legacy `joblib` artifacts once, extracting only the raw mathematical parameters (e.g., `mean`, `scale`, `categories`, `x_thresholds`, `y_thresholds`).
 2. **Stable Components:** The parameters are packaged into a purely declarative JSON and NPZ archive. At runtime, pure NumPy/Python classes (`StablePreprocessor`, `StableIsotonicCalibrator`) consume these arrays to execute transforms and piecewise interpolations.
-3. **Checksum Enforcement:** To prevent tampering or accidental corruption, a strict SHA-256 manifest is verified before the predictor initializes.
+3. **Checksum Enforcement:** To prevent accidental corruption, a strict SHA-256 manifest is verified before the predictor initializes. Note that this ensures file integrity, not cryptographic authenticity of the artifact source.
 
 ## Parity Results
 The stable implementations have been rigorously benchmarked against the legacy pipeline:

@@ -35,6 +35,12 @@ deep-learning = [
 explainability = [
     "captum"
 ]
+api = [
+    "fastapi",
+    "uvicorn[standard]",
+    "httpx",
+    "python-multipart"
+]
 
 [project.scripts]
 fraudshield = "fraudshield.cli:app"

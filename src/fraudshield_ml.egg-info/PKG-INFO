@@ -24,6 +24,11 @@ Provides-Extra: deep-learning
 Requires-Dist: torch; extra == "deep-learning"
 Provides-Extra: explainability
 Requires-Dist: captum; extra == "explainability"
+Provides-Extra: api
+Requires-Dist: fastapi; extra == "api"
+Requires-Dist: uvicorn[standard]; extra == "api"
+Requires-Dist: httpx; extra == "api"
+Requires-Dist: python-multipart; extra == "api"
 Dynamic: license-file
 
 # FraudShield ML

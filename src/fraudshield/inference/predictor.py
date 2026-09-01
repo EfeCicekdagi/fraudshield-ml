@@ -85,8 +85,13 @@ class FraudPredictor:
             df['oldbalanceOrg'] == 0, 0.0, df['amount'] / df['oldbalanceOrg']
         ).astype('float32')
         
-        df['orig_account_type'] = df.get('nameOrig', 'C').astype(str).str[0].astype('category')
-        df['dest_account_type'] = df.get('nameDest', 'C').astype(str).str[0].astype('category')
+        if 'orig_account_type' not in df.columns and 'nameOrig' in df.columns:
+            df['orig_account_type'] = df['nameOrig'].astype(str).str[0]
+        df['orig_account_type'] = df.get('orig_account_type', 'C').astype('category')
+        
+        if 'dest_account_type' not in df.columns and 'nameDest' in df.columns:
+            df['dest_account_type'] = df['nameDest'].astype(str).str[0]
+        df['dest_account_type'] = df.get('dest_account_type', 'C').astype('category')
         
         df.replace([np.inf, -np.inf], np.nan, inplace=True)
         numeric_cols = df.select_dtypes(include=[np.number]).columns
@@ -120,7 +125,7 @@ class FraudPredictor:
             
         return sorted(results, key=lambda x: abs(x["attribution"]), reverse=True)
 
-    def predict_single(self, request: TransactionRequest) -> InferenceResponse:
+    def predict_single(self, request: TransactionRequest, explain: bool = False) -> InferenceResponse:
         t0 = time.time()
         inference_id = str(uuid.uuid4())
         
@@ -157,7 +162,16 @@ class FraudPredictor:
         reason_codes = []
         top_contributors = []
         
-        if self.explainability_enabled:
+        do_explain = explain and self.explainability_enabled
+        
+        explanation_block = {
+            "enabled": do_explain,
+            "method": "Integrated Gradients" if do_explain else None,
+            "target": "Raw Logit" if do_explain else None,
+            "convergence_delta": None
+        }
+        
+        if do_explain:
             attributions, delta = self.ig.attribute(
                 X_tensor, 
                 baselines=self.baseline_tensor, 
@@ -167,6 +181,8 @@ class FraudPredictor:
             # Explainability Contract Verification (Step 5)
             if delta is not None and abs(delta.item()) > 0.05:
                 logger.warning(f"IG convergence delta {delta.item():.4f} is high for inference {inference_id}")
+            if delta is not None:
+                explanation_block["convergence_delta"] = float(delta.item())
             
             attr_np = attributions.cpu().detach().numpy()[0]
             grouped_attrs = self._group_attributions(attr_np)
@@ -194,15 +210,16 @@ class FraudPredictor:
             decision_threshold=self.env.operational_threshold,
             reason_codes=reason_codes,
             top_contributors=top_contributors,
+            explanation=explanation_block,
             model_version=self.model_version,
             inference_id=inference_id
         )
         
-    def predict_batch(self, batch: BatchTransactionRequest) -> List[Union[InferenceResponse, dict]]:
+    def predict_batch(self, batch: BatchTransactionRequest, explain: bool = False) -> List[Union[InferenceResponse, dict]]:
         results = []
         for idx, req in enumerate(batch.transactions):
             try:
-                res = self.predict_single(req)
+                res = self.predict_single(req, explain=explain)
                 results.append(res)
             except Exception as e:
                 if self.fail_fast:

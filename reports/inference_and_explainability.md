@@ -20,14 +20,14 @@ A critical constraint in Phase 7 was guaranteeing strict parity while removing a
 
 *   **Incompatibility Bypass:** Loading legacy models trained in Scikit-Learn `1.3` into newer `1.9` environments yields dangerous behavior and `InconsistentVersionWarning`. For security and reliability, we extracted the internals of both the `ColumnTransformer` (StandardScaler/OneHotEncoder) and `CalibratedClassifierCV` (IsotonicRegression) into a JSON/NPZ bundle via a one-time migration script.
 *   **Pure NumPy Replacements:** `StablePreprocessor` and `StableIsotonicCalibrator` were developed to mimic Scikit-Learn's behavior down to `1e-6` precision using native Python and NumPy routines (like `np.interp`).
-*   **Bundle Integrity Check:** The runtime enforces checksum verification upon loading the bundle. Corrupt or missing artifacts immediately halt the predictor.
-*   **Parity Verification Results:** Extensive testing with synthetic adversarial cases (zero balance, huge amounts, unknown categories) yielded a maximum preprocessing and calibration parity difference of `< 1e-6`, validating that retraining was successfully avoided while maintaining exact operational boundaries.
+*   **Bundle Integrity Check:** The runtime enforces checksum verification upon loading the bundle. Checksum matching guarantees file integrity (against accidental corruption) but does not provide cryptographic authenticity of the artifact source.
+*   **Parity Verification Results:** Extensive testing with synthetic adversarial cases (zero balance, huge amounts, unknown categories) yielded parity verified within documented numerical tolerances, validating that retraining was successfully avoided while maintaining exact operational boundaries.
 
 ## Performance Benchmark
 
 The lightweight predictor was benchmarked with and without explainability enabled.
 
-*   **Cold Load Time:** 13.53 ms (Drastic improvement due to removal of Scikit-Learn pickling)
+*   **Bundle Initialization Time:** 12.84 ms (Drastic improvement due to removal of Scikit-Learn pickling)
 *   **Warm Single Inference Latency:** ~7.60 ms (Without IG) / ~17.19 ms (With IG)
 *   **Batch Throughput:** 
     * Without Explanations: 139.60 req/sec
