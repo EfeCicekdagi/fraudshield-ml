@@ -26,7 +26,10 @@ logger = logging.getLogger(__name__)
 def evaluate_baseline_rule(df, y_true):
     """Simple baseline rule: IF amount > 200,000 AND type in TRANSFER/CASH_OUT THEN fraud"""
     preds = ((df['amount'] > 200000) & (df['type'].isin(['TRANSFER', 'CASH_OUT']))).astype(int)
-    return evaluate_metrics(y_true, preds, threshold=0.5)
+    # Use standard evaluate_metrics but override pr_auc to None
+    metrics = evaluate_metrics(y_true, preds, threshold=0.5)
+    metrics['pr_auc'] = None
+    return metrics
 
 def train_mlp_fixed(df_train, y_train, df_val, y_val, features, mlp_config, scale_pos):
     # Dynamic import to avoid dependency issues if torch isn't used
@@ -377,8 +380,8 @@ def generate_final_reports(report_dir, test_m, rule_m, hyb_m, inner_m, champ, ca
         "",
         "| Metric | Value |",
         "|--------|-------|",
-        f"| ML Final PR-AUC | {test_m['pr_auc']:.4f} |",
-        f"| ROC-AUC | {test_m['roc_auc']:.4f} |",
+        f"| ML Final PR-AUC | {test_m.get('pr_auc', 'N/A'):.4f} |",
+        f"| ROC-AUC | {test_m.get('roc_auc', 'N/A'):.4f} |",
         f"| Brier score | {test_m.get('brier_score', 0):.4f} |",
         "| Log loss | *Missing* |",
         "| ECE | *Missing* |",

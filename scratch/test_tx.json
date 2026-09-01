@@ -1,0 +1,9 @@
+{
+  "step": 1,
+  "type": "TRANSFER",
+  "amount": 250000.50,
+  "oldbalanceOrg": 300000.00,
+  "nameOrig": "C123456789",
+  "nameDest": "C987654321",
+  "oldbalanceDest": 0.0
+}

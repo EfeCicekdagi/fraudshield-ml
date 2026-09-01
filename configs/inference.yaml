@@ -1,0 +1,7 @@
+model_version: "1.0.0"
+artifacts_dir: "artifacts/final"
+reason_codes_config_path: "configs/reason_codes.yaml"
+fail_fast: false
+explainability:
+  enabled: true
+  baseline_path: "artifacts/final/reference_baseline.json"

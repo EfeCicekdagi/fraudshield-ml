@@ -17,6 +17,13 @@ Requires-Dist: typer>=0.9.0
 Requires-Dist: pydantic>=2.0.0
 Provides-Extra: dev
 Requires-Dist: pytest<9.0,>=8.0; extra == "dev"
+Provides-Extra: boosting
+Requires-Dist: lightgbm>=4.0; extra == "boosting"
+Requires-Dist: optuna>=3.0; extra == "boosting"
+Provides-Extra: deep-learning
+Requires-Dist: torch; extra == "deep-learning"
+Provides-Extra: explainability
+Requires-Dist: captum; extra == "explainability"
 Dynamic: license-file
 
 # FraudShield ML
@@ -48,8 +55,14 @@ python -m venv .venv
 
 Windows PowerShell:
 ```powershell
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
+
+# For LightGBM support (Phase 4):
+pip install -e ".[boosting]"
+
+# For Deep Learning / PyTorch support (Phase 5):
+pip install -e ".[deep-learning]"
 ```
 
 ## Veri Seti

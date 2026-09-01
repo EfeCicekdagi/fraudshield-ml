@@ -32,6 +32,9 @@ boosting = [
 deep-learning = [
     "torch"
 ]
+explainability = [
+    "captum"
+]
 
 [project.scripts]
 fraudshield = "fraudshield.cli:app"
@@ -43,3 +46,9 @@ include = ["fraudshield*"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+[tool.fraudshield.environment]
+training = "scikit-learn 1.3 (legacy artifacts via pickling)"
+inference = "numpy + pytorch + pydantic (version-independent bundle)"
+portability_approach = "Scikit-Learn Preprocessor and IsotonicCalibrator are extracted into pure NumPy parameters during bundle creation. This avoids unpickling legacy joblib files at runtime."
+security = "Loading unpickled Scikit-Learn models from unknown sources is unsafe. The pure JSON/NPZ bundle strategy avoids arbitrary code execution."

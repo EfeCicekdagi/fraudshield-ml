@@ -77,8 +77,8 @@ def build_all_features(df: pd.DataFrame) -> pd.DataFrame:
     
     # Ensure no uncontrolled NaNs or Infs from our math
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
-    # Fill remaining NaNs introduced by inf replacements with 0
-    df.fillna(0, inplace=True)
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    df[numeric_cols] = df[numeric_cols].fillna(0)
     
     logger.info(f"Feature engineering completed. Resulting shape: {df.shape}")
     return df

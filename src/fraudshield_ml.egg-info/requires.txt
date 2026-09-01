@@ -9,5 +9,15 @@ PyYAML<7.0,>=6.0
 typer>=0.9.0
 pydantic>=2.0.0
 
+[boosting]
+lightgbm>=4.0
+optuna>=3.0
+
+[deep-learning]
+torch
+
 [dev]
 pytest<9.0,>=8.0
+
+[explainability]
+captum

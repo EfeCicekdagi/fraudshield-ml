@@ -1,0 +1,42 @@
+reason_codes_disclaimer: "Reason codes represent contributing signals to the model's decision, not deterministic 'causes' of fraud. The model uses complex non-linear combinations of all features."
+
+reason_codes:
+  - code: "HIGH_AMOUNT"
+    description: "The transaction amount is unusually high, increasing risk."
+    feature: "amount"
+    direction: "positive"
+    min_attribution: 0.10
+    severity: "HIGH"
+    version: "1.0"
+    
+  - code: "HIGH_AMOUNT_TO_SOURCE_BALANCE"
+    description: "The transaction drains a significant portion of the source account balance."
+    feature: "amount_to_oldbalance_orig_ratio"
+    direction: "positive"
+    min_attribution: 0.15
+    severity: "CRITICAL"
+    version: "1.0"
+    
+  - code: "RISKY_TRANSACTION_TYPE"
+    description: "The transaction type is historically associated with higher fraud rates (e.g., TRANSFER, CASH_OUT)."
+    feature: "is_risky_type"
+    direction: "positive"
+    min_attribution: 0.05
+    severity: "HIGH"
+    version: "1.0"
+    
+  - code: "UNUSUAL_TRANSACTION_TIME"
+    description: "The transaction occurred at an unusual time of day."
+    feature: "hour_of_day"
+    direction: "positive"
+    min_attribution: 0.05
+    severity: "MEDIUM"
+    version: "1.0"
+    
+  - code: "LOW_SOURCE_BALANCE"
+    description: "The source account balance is suspiciously low."
+    feature: "oldbalanceOrg"
+    direction: "positive" 
+    min_attribution: 0.05
+    severity: "MEDIUM"
+    version: "1.0"

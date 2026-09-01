@@ -142,5 +142,79 @@ def finalize_model(
     run_finalization_pipeline(str(config))
     logger.info("Finalization pipeline finished.")
 
+@app.command()
+def predict(
+    input_file: Path = typer.Option(..., "--input", "-i", help="Path to input JSON transaction"),
+    config: Path = typer.Option("configs/inference.yaml", help="Path to inference config")
+):
+    """Run real-time inference on a single transaction JSON."""
+    import json
+    from fraudshield.inference.predictor import FraudPredictor
+    from fraudshield.inference.schemas import TransactionRequest
+    
+    with open(input_file, "r") as f:
+        data = json.load(f)
+        
+    predictor = FraudPredictor(str(config))
+    req = TransactionRequest(**data)
+    res = predictor.predict_single(req)
+    
+    print(json.dumps(res.model_dump(), indent=2))
+
+@app.command()
+def predict_batch(
+    input_file: Path = typer.Option(..., "--input", "-i", help="Path to input CSV transactions"),
+    output_file: Path = typer.Option(..., "--output", "-o", help="Path to output CSV predictions"),
+    config: Path = typer.Option("configs/inference.yaml", help="Path to inference config")
+):
+    """Run batch inference on a CSV file."""
+    import pandas as pd
+    from fraudshield.inference.predictor import FraudPredictor
+    from fraudshield.inference.schemas import BatchTransactionRequest, TransactionRequest
+    
+    logger.info(f"Loading batch data from {input_file}")
+    df = pd.read_csv(input_file)
+    
+    # Convert DF to list of requests
+    reqs = []
+    for record in df.to_dict("records"):
+        reqs.append(TransactionRequest(**record))
+        
+    batch_req = BatchTransactionRequest(transactions=reqs)
+    predictor = FraudPredictor(str(config))
+    
+    import time
+    t0 = time.time()
+    results = predictor.predict_batch(batch_req)
+    t1 = time.time()
+    
+    logger.info(f"Batch processed {len(results)} rows in {t1-t0:.2f} seconds.")
+    
+    # Save to CSV
+    res_df = pd.DataFrame([r.model_dump() if not isinstance(r, dict) else r for r in results])
+    res_df.to_csv(output_file, index=False)
+    logger.info(f"Predictions saved to {output_file}")
+
+@app.command()
+def model_info(
+    config: Path = typer.Option("configs/inference.yaml", help="Path to inference config")
+):
+    """Display loaded model metadata and policy rules."""
+    from fraudshield.inference.predictor import FraudPredictor
+    
+    predictor = FraudPredictor(str(config))
+    env = predictor.env
+    
+    print("=== FraudShield Model Info ===")
+    print(f"Model Version: {predictor.model_version}")
+    print(f"Model Type: {env.metadata.get('champion')}")
+    print(f"Calibration Method: {env.metadata.get('calibrator')}")
+    print(f"Decision Threshold: {env.operational_threshold}")
+    print(f"Risk Policy Boundaries: {env.risk_levels}")
+    print(f"Feature Contract: {env.feature_schema}")
+    print("Explanation Method: Captum Integrated Gradients (Pre-Calibration Logit)")
+    print("Intended Use: Real-time pre-transaction fraud scoring.")
+    print("Known Limitations: Not a completely independent holdout prediction (Phase 3 evaluation leakage). Synthetic PaySim artifacts excluded.")
+
 if __name__ == "__main__":
     app()
