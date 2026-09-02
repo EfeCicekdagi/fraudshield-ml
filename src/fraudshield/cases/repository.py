@@ -34,10 +34,17 @@ class CaseRepository:
         # Log initial event
         event = CaseEvent(
             case_id=db_case.case_id,
-            previous_status=None,
-            new_status="NEW",
+            event_type="creation",
+            previous_value=None,
+            new_value="NEW",
             actor="system",
-            note="Case auto-created from inference"
+            case_version=1,
+            audit_context={
+                "event_source": "system",
+                "changed_fields": ["status"],
+                "previous_case_version": None,
+                "new_case_version": 1
+            }
         )
         self.session.add(event)
         
@@ -84,7 +91,9 @@ class CaseRepository:
         new_priority: str, 
         new_note: Optional[str],
         actor: str,
-        current_status: str
+        current_status: str,
+        current_priority: str,
+        current_note: Optional[str]
     ) -> bool:
         """
         Performs an optimistic update. Returns True if successful, False if version mismatch.
@@ -105,15 +114,56 @@ class CaseRepository:
         if result.rowcount == 0:
             return False
             
-        # Log the event
-        event = CaseEvent(
-            case_id=case_id,
-            previous_status=current_status,
-            new_status=new_status,
-            actor=actor,
-            note=new_note
-        )
-        self.session.add(event)
+        new_version = expected_version + 1
+        
+        # Log events for each mutated field
+        if current_status != new_status:
+            self.session.add(CaseEvent(
+                case_id=case_id,
+                event_type="status_change",
+                previous_value=current_status,
+                new_value=new_status,
+                actor=actor,
+                case_version=new_version,
+                audit_context={
+                    "event_source": "api_update",
+                    "changed_fields": ["status"],
+                    "previous_case_version": expected_version,
+                    "new_case_version": new_version
+                }
+            ))
+            
+        if current_priority != new_priority:
+            self.session.add(CaseEvent(
+                case_id=case_id,
+                event_type="priority_change",
+                previous_value=current_priority,
+                new_value=new_priority,
+                actor=actor,
+                case_version=new_version,
+                audit_context={
+                    "event_source": "api_update",
+                    "changed_fields": ["priority"],
+                    "previous_case_version": expected_version,
+                    "new_case_version": new_version
+                }
+            ))
+            
+        if current_note != new_note:
+            self.session.add(CaseEvent(
+                case_id=case_id,
+                event_type="note_change",
+                previous_value="[REDACTED]",
+                new_value="[REDACTED]",
+                actor=actor,
+                case_version=new_version,
+                audit_context={
+                    "event_source": "api_update",
+                    "changed_fields": ["analyst_note"],
+                    "previous_case_version": expected_version,
+                    "new_case_version": new_version
+                }
+            ))
         
         return True
 

@@ -46,14 +46,22 @@ class CaseResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class AuditContext(BaseModel):
+    event_source: str
+    changed_fields: List[str]
+    previous_case_version: Optional[int]
+    new_case_version: Optional[int]
+
 class CaseEventResponse(BaseModel):
     event_id: str
     case_id: str
-    previous_status: Optional[str]
-    new_status: str
+    event_type: str
+    previous_value: Optional[str]
+    new_value: Optional[str]
     actor: str
-    note: Optional[str]
     timestamp: datetime
+    case_version: int
+    audit_context: Optional[AuditContext] = None
 
     class Config:
         from_attributes = True

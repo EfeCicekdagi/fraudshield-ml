@@ -49,7 +49,9 @@ class CaseService:
             new_priority=new_priority,
             new_note=new_note,
             actor=update_data.actor,
-            current_status=current_status
+            current_status=current_status,
+            current_priority=case.priority,
+            current_note=case.analyst_note
         )
         
         if not success:

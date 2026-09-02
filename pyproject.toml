@@ -46,6 +46,12 @@ dashboard = [
     "sqlalchemy>=2.0.0",
     "requests>=2.31.0"
 ]
+production = [
+    "psycopg2-binary>=2.9.0",
+    "alembic>=1.13.0",
+    "prometheus-client>=0.20.0",
+    "python-json-logger>=2.0.0"
+]
 
 [project.scripts]
 fraudshield = "fraudshield.cli:app"

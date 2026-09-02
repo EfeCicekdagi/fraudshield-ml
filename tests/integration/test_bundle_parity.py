@@ -103,10 +103,20 @@ def test_full_inference_parity():
     max_prob_diff = 0.0
     
     for idx, tx in enumerate(transactions):
-        req = TransactionRequest(**tx)
+        df_raw = pd.DataFrame([tx])
+        row_dict = df_raw.iloc[0].to_dict()
+        for k in ['isFraud', 'isFlaggedFraud', 'newbalanceOrig', 'newbalanceDest', 'error_balance_orig', 'error_balance_dest', 'nameOrig', 'nameDest', 'fraud_score', 'calibrated_probability', 'risk_level']:
+            row_dict.pop(k, None)
+        
+        # Ensure required types
+        row_dict['orig_account_type'] = row_dict.get('orig_account_type', 'C')
+        row_dict['dest_account_type'] = row_dict.get('dest_account_type', 'C')
+        if row_dict.get('type') not in ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']:
+            row_dict['type'] = 'TRANSFER'
+        
+        req = TransactionRequest(**row_dict)
         res_new = predictor.predict_single(req)
         
-        df_raw = pd.DataFrame([tx])
         df_feats = predictor._build_features(df_raw)
         
         X_legacy = legacy_p.transform(df_feats)

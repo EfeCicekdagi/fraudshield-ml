@@ -32,3 +32,9 @@ pytest<9.0,>=8.0
 
 [explainability]
 captum
+
+[production]
+psycopg2-binary>=2.9.0
+alembic>=1.13.0
+prometheus-client>=0.20.0
+python-json-logger>=2.0.0

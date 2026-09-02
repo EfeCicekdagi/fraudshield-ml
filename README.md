@@ -86,7 +86,15 @@ pytest
 6. ~~Threshold ve Calibration ayarlamaları~~ (Tamamlandı)
 7. ~~Version-Independent Inference Bundle~~ (Tamamlandı)
 8. ~~Production-Oriented FastAPI Inference Service~~ (Tamamlandı)
-9. Streamlit dashboard (Planlanıyor)
+9. ~~Streamlit dashboard~~ (Tamamlandı)
+10. ~~Docker Containerization & Observability~~ (Tamamlandı)
+
+## Çalıştırma (Docker Compose)
+Uygulama tüm bileşenleriyle (PostgreSQL, FastAPI, Streamlit Dashboard, Prometheus ve Grafana) tek komutla başlatılabilir:
+```bash
+docker compose up -d --build
+```
+Daha detaylı bilgi için [docs/deployment.md](docs/deployment.md) dosyasına bakınız.
 
 ## Çalıştırma (Inference API ve Dashboard)
 

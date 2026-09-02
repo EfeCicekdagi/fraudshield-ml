@@ -5,6 +5,9 @@ from typing import List, Union
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
 from fastapi.concurrency import run_in_threadpool
 import asyncio
+import time
+
+from fraudshield.api.metrics import PREDICTION_COUNT, PREDICTION_LATENCY
 
 from fraudshield.inference.schemas import TransactionRequest, BatchTransactionRequest, InferenceResponse
 from fraudshield.inference.predictor import FraudPredictor
@@ -29,11 +32,17 @@ async def predict_single(
     """
     Score a single transaction. Explainability is disabled by default for performance.
     """
-    if explain:
-        async with explain_semaphore:
-            return await run_in_threadpool(predictor.predict_single, request, explain=True)
-    else:
-        return await run_in_threadpool(predictor.predict_single, request, explain=False)
+    start_time = time.time()
+    try:
+        if explain:
+            async with explain_semaphore:
+                res = await run_in_threadpool(predictor.predict_single, request, explain=True)
+        else:
+            res = await run_in_threadpool(predictor.predict_single, request, explain=False)
+        PREDICTION_COUNT.labels(risk_level=res.risk_level).inc()
+        return res
+    finally:
+        PREDICTION_LATENCY.observe(time.time() - start_time)
 
 @router.post("/explain", response_model=InferenceResponse, dependencies=[Depends(get_api_key)])
 async def explain_single(
@@ -65,9 +74,14 @@ async def predict_batch(
         
     if explain:
         async with explain_semaphore:
-            return await run_in_threadpool(predictor.predict_batch, request, explain=True)
+            results = await run_in_threadpool(predictor.predict_batch, request, explain=True)
     else:
-        return await run_in_threadpool(predictor.predict_batch, request, explain=False)
+        results = await run_in_threadpool(predictor.predict_batch, request, explain=False)
+        
+    for res in results:
+        if isinstance(res, InferenceResponse):
+            PREDICTION_COUNT.labels(risk_level=res.risk_level).inc()
+    return results
 
 @router.post("/predict/file", response_model=List[Union[InferenceResponse, dict]], dependencies=[Depends(get_api_key)])
 async def predict_file(
@@ -111,6 +125,11 @@ async def predict_file(
     
     if explain:
         async with explain_semaphore:
-            return await run_in_threadpool(predictor.predict_batch, batch_req, explain=True)
+            results = await run_in_threadpool(predictor.predict_batch, batch_req, explain=True)
     else:
-        return await run_in_threadpool(predictor.predict_batch, batch_req, explain=False)
+        results = await run_in_threadpool(predictor.predict_batch, batch_req, explain=False)
+        
+    for res in results:
+        if isinstance(res, InferenceResponse):
+            PREDICTION_COUNT.labels(risk_level=res.risk_level).inc()
+    return results

@@ -220,7 +220,17 @@ def test_full_inference_parity(legacy_preprocessor, legacy_calibrator, predictor
     logits_stable = []
     
     for i in range(len(df_raw)):
-        req = TransactionRequest(**df_raw.iloc[i].to_dict())
+        row_dict = df_raw.iloc[i].to_dict()
+        for k in ['isFraud', 'isFlaggedFraud', 'newbalanceOrig', 'newbalanceDest', 'error_balance_orig', 'error_balance_dest', 'nameOrig', 'nameDest', 'fraud_score', 'calibrated_probability', 'risk_level']:
+            row_dict.pop(k, None)
+        
+        # Ensure required types
+        row_dict['orig_account_type'] = row_dict.get('orig_account_type', 'C')
+        row_dict['dest_account_type'] = row_dict.get('dest_account_type', 'C')
+        if row_dict.get('type') not in ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']:
+            row_dict['type'] = 'TRANSFER'
+        
+        req = TransactionRequest(**row_dict)
         res = predictor.predict_single(req)
         final_prob_stable.append(res.calibrated_probability)
         logits_stable.append(res.fraud_score)
