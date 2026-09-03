@@ -7,7 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev &
 COPY pyproject.toml /app/
 # Create a dummy src so setuptools doesn't fail on package discovery
 RUN mkdir -p /app/src/fraudshield && touch /app/src/fraudshield/__init__.py
-RUN pip install --upgrade pip && pip install --prefix=/install .[api,dashboard,production,explainability]
+RUN pip install --upgrade pip && \
+    pip install --prefix=/install torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --prefix=/install .[api,dashboard,production,explainability]
 
 # Stage 2: Runtime
 FROM python:3.10-slim

@@ -2,12 +2,12 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Ensure data directory exists
 DB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "data")
-os.makedirs(DB_DIR, exist_ok=True)
 DB_PATH = os.path.join(DB_DIR, "cases.db")
-
 DATABASE_URL = os.environ.get("FRAUDSHIELD_DATABASE_URL", f"sqlite:///{DB_PATH}")
+
+if DATABASE_URL.startswith("sqlite"):
+    os.makedirs(DB_DIR, exist_ok=True)
 
 # Configure engine with connection pooling and pre-ping
 engine_kwargs = {

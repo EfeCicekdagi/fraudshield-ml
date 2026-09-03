@@ -90,7 +90,7 @@ def test_stable_preprocessor_parity():
     
     np.testing.assert_allclose(stable_transformed, legacy_transformed, atol=1e-6, err_msg="Preprocessor parity failed")
     
-def test_full_inference_parity():
+def test_predictor_parity():
     predictor = FraudPredictor() # uses bundle natively now
     
     legacy_p = joblib.load('artifacts/final/preprocessor.joblib')
@@ -103,20 +103,23 @@ def test_full_inference_parity():
     max_prob_diff = 0.0
     
     for idx, tx in enumerate(transactions):
-        df_raw = pd.DataFrame([tx])
-        row_dict = df_raw.iloc[0].to_dict()
+        api_payload = tx.copy()
+        
+        # Derive accurate types for strict schema instead of blind coercion
+        api_payload['orig_account_type'] = api_payload.get('nameOrig', 'C')[0]
+        api_payload['dest_account_type'] = api_payload.get('nameDest', 'C')[0]
+        
         for k in ['isFraud', 'isFlaggedFraud', 'newbalanceOrig', 'newbalanceDest', 'error_balance_orig', 'error_balance_dest', 'nameOrig', 'nameDest', 'fraud_score', 'calibrated_probability', 'risk_level']:
-            row_dict.pop(k, None)
+            api_payload.pop(k, None)
         
-        # Ensure required types
-        row_dict['orig_account_type'] = row_dict.get('orig_account_type', 'C')
-        row_dict['dest_account_type'] = row_dict.get('dest_account_type', 'C')
-        if row_dict.get('type') not in ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']:
-            row_dict['type'] = 'TRANSFER'
+        if api_payload.get('type') not in ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']:
+            api_payload['type'] = 'TRANSFER'
         
-        req = TransactionRequest(**row_dict)
+        req = TransactionRequest(**api_payload)
         res_new = predictor.predict_single(req)
         
+        # Pass the EXACT same raw inputs to the legacy preprocessing pipeline
+        df_raw = pd.DataFrame([req.model_dump()])
         df_feats = predictor._build_features(df_raw)
         
         X_legacy = legacy_p.transform(df_feats)
@@ -141,6 +144,43 @@ def test_full_inference_parity():
     print(f"Parity Test Passed for {len(transactions)} synthetic transactions.")
     print(f"Max raw logit difference: {max_logit_diff:.8e}")
     print(f"Max calibration difference: {max_prob_diff:.8e}")
+
+from pydantic import ValidationError
+
+def test_api_schema_contract():
+    # Verify invalid or ambiguous input types are rejected
+    tx = generate_synthetic_data(1)[0]
+    
+    # 1. Missing explicit account types
+    tx_missing = tx.copy()
+    tx_missing.pop("nameOrig", None)
+    tx_missing.pop("nameDest", None)
+    if "orig_account_type" in tx_missing: tx_missing.pop("orig_account_type")
+    
+    with pytest.raises(ValidationError) as exc:
+        TransactionRequest(**tx_missing)
+    assert "orig_account_type" in str(exc.value)
+    
+    # 2. Forbidden field rejection
+    tx_forbidden = tx.copy()
+    tx_forbidden["orig_account_type"] = tx_forbidden.get("nameOrig", "C")[0]
+    tx_forbidden["dest_account_type"] = tx_forbidden.get("nameDest", "C")[0]
+    tx_forbidden["newbalanceOrig"] = 500.0 # strictly forbidden
+    with pytest.raises(ValidationError) as exc:
+        TransactionRequest(**tx_forbidden)
+    assert "Forbidden field" in str(exc.value)
+    
+    # 3. Valid coercion
+    tx_valid = tx.copy()
+    tx_valid["orig_account_type"] = tx_valid.get("nameOrig", "C")[0]
+    tx_valid["dest_account_type"] = tx_valid.get("nameDest", "C")[0]
+    for k in ["newbalanceOrig", "nameOrig", "nameDest"]:
+        tx_valid.pop(k, None)
+    if tx_valid.get('type') not in ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']:
+        tx_valid['type'] = 'TRANSFER'
+        
+    req = TransactionRequest(**tx_valid)
+    assert req.orig_account_type in ["C", "M"]
 
 def test_bundle_corruption():
     # If checksums are missing, it should fail

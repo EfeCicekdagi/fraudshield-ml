@@ -28,7 +28,7 @@ services:
     build: .
     command: uvicorn fraudshield.api.app:create_app --host 0.0.0.0 --port 8000 --factory
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       - FRAUDSHIELD_DATABASE_URL=postgresql://fraudshield:password@postgres:5432/cases
       - FRAUDSHIELD_API_KEY=test_key
@@ -45,7 +45,7 @@ services:
     build: .
     command: streamlit run src/fraudshield/dashboard/app.py --server.port 8501
     ports:
-      - "8501:8501"
+      - "127.0.0.1:8501:8501"
     environment:
       - FRAUDSHIELD_API_URL=http://api:8000
     depends_on:
@@ -57,12 +57,12 @@ services:
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
 
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:

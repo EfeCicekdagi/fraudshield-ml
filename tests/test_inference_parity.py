@@ -93,15 +93,15 @@ def synthetic_data():
             "nameDest": f"C{np.random.randint(100, 999)}"
         })
         
-    # 2. Unknown categories & zeroes
+    # 2. Zeroes and edge cases
     for _ in range(50):
         data.append({
             "step": np.random.randint(1, 744),
-            "type": "UNKNOWN_TYPE", # Unseen category
+            "type": "TRANSFER", # Must be a valid type for API validation
             "amount": 0.0,
             "oldbalanceOrg": 0.0,
-            "nameOrig": f"X{np.random.randint(100, 999)}", # Unknown account type prefix
-            "nameDest": f"Y{np.random.randint(100, 999)}"
+            "nameOrig": f"C{np.random.randint(100, 999)}",
+            "nameDest": f"M{np.random.randint(100, 999)}"
         })
         
     # 3. Huge amounts
@@ -221,12 +221,16 @@ def test_full_inference_parity(legacy_preprocessor, legacy_calibrator, predictor
     
     for i in range(len(df_raw)):
         row_dict = df_raw.iloc[i].to_dict()
+        
+        # Derive accurate types for strict schema instead of blind coercion
+        orig_acc_type = df_raw.iloc[i].get('nameOrig', 'C')[0]
+        dest_acc_type = df_raw.iloc[i].get('nameDest', 'C')[0]
+        
         for k in ['isFraud', 'isFlaggedFraud', 'newbalanceOrig', 'newbalanceDest', 'error_balance_orig', 'error_balance_dest', 'nameOrig', 'nameDest', 'fraud_score', 'calibrated_probability', 'risk_level']:
             row_dict.pop(k, None)
         
-        # Ensure required types
-        row_dict['orig_account_type'] = row_dict.get('orig_account_type', 'C')
-        row_dict['dest_account_type'] = row_dict.get('dest_account_type', 'C')
+        row_dict['orig_account_type'] = orig_acc_type
+        row_dict['dest_account_type'] = dest_acc_type
         if row_dict.get('type') not in ['PAYMENT', 'TRANSFER', 'CASH_OUT', 'DEBIT', 'CASH_IN']:
             row_dict['type'] = 'TRANSFER'
         
