@@ -21,7 +21,6 @@ COPY --from=builder /install /usr/local
 
 COPY src/ /app/src/
 COPY configs/ /app/configs/
-COPY artifacts/ /app/artifacts/
 COPY alembic/ /app/alembic/
 COPY alembic.ini /app/
 

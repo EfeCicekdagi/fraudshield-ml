@@ -26,8 +26,15 @@ class ModelEnvironment:
         return cls._instance
 
     def _load_artifacts(self, artifacts_dir: str):
-        # We enforce using the inference_bundle for runtime safety
-        base_path = Path(artifacts_dir) / "inference_bundle"
+        bundle_path = os.getenv("FRAUDSHIELD_BUNDLE_PATH")
+        if bundle_path:
+            base_path = Path(bundle_path)
+            logger.info(f"Using explicitly configured bundle path: {base_path}")
+        else:
+            # We enforce using the inference_bundle for runtime safety
+            base_path = Path(artifacts_dir) / "inference_bundle"
+        
+        self.bundle_path = base_path
         
         if not base_path.exists():
             raise FileNotFoundError(f"Inference bundle directory not found at {base_path}")

@@ -41,7 +41,7 @@ class FraudPredictor:
         self.env.model.eval() # PyTorch Inference Safety (Step 4)
         
         if self.explainability_enabled:
-            baseline_path = self.config["explainability"].get("baseline_path", "artifacts/final/reference_baseline.json")
+            baseline_path = self.env.bundle_path / "reference_baseline.json"
             with open(baseline_path, "r") as f:
                 self.reference_baseline = json.load(f)
                 
@@ -144,9 +144,10 @@ class FraudPredictor:
         
         # 2. Get base fraud score (logit) and probability
         with torch.inference_mode(): # Step 4: Strict inference mode
-            fraud_score = float(self.env.model(X_tensor).cpu().numpy()[0])
-            # sigmoid to get probability
-            prob_base = 1.0 / (1.0 + np.exp(-fraud_score))
+            raw_output = self.env.model(X_tensor)
+            fraud_score = float(raw_output.cpu().numpy()[0])
+            # numerically stable sigmoid
+            prob_base = float(torch.sigmoid(raw_output).cpu().numpy()[0])
             
         # 3. Apply stable calibrator directly
         prob = float(self.env.calibrator.predict([prob_base])[0])

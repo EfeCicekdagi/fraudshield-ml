@@ -9,6 +9,10 @@ import torch
 # Workaround for scikit-learn 1.9 loading 1.3 models
 from sklearn.base import BaseEstimator
 from fraudshield.pipelines.finalization_pipeline import MLPPipeline
+import warnings
+from sklearn.exceptions import InconsistentVersionWarning
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+
 class DummyBase(BaseEstimator): pass
 MLPPipeline.__sklearn_tags__ = DummyBase.__sklearn_tags__
 
@@ -188,6 +192,12 @@ def test_full_inference_parity(legacy_preprocessor, legacy_calibrator, predictor
     if not os.path.exists(model_path):
         pytest.skip("Model state dict not found.")
         
+    from fraudshield.models.risk_levels import assign_risk_level
+
+    import warnings
+    from sklearn.exceptions import InconsistentVersionWarning
+    warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+    
     from fraudshield.models.mlp import FraudMLP
     # Inference bundle architecture
     state_dict = torch.load(model_path, map_location='cpu')

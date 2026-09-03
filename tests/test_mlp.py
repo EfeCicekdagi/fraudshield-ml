@@ -80,8 +80,10 @@ def mock_mlp_environment(tmp_path):
         'isFraud': np.random.choice([0, 1], p=[0.9, 0.1], size=num_samples)
     })
     
-    # Ensure at least some positive class in both train/val parts
+    # Ensure at least some positive class in all splits
+    # inner_train (0-63), inner_val (64-79), outer_val (80-99)
     df.loc[10:15, 'isFraud'] = 1
+    df.loc[70:75, 'isFraud'] = 1
     df.loc[90:95, 'isFraud'] = 1
     
     # 80/20 train/val split for outer split

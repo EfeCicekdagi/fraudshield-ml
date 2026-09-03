@@ -10,8 +10,15 @@ from fraudshield.inference.predictor import FraudPredictor
 from fraudshield.inference.stable_components import StableIsotonicCalibrator, StablePreprocessor
 from fraudshield.inference.schemas import TransactionRequest
 
+import warnings
+from sklearn.exceptions import InconsistentVersionWarning
+
+# Suppress expected legacy unpickling warnings in this compatibility test
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+
 from sklearn.base import BaseEstimator
 from fraudshield.pipelines.finalization_pipeline import MLPPipeline
+
 class DummyBase(BaseEstimator): pass
 MLPPipeline.__sklearn_tags__ = DummyBase.__sklearn_tags__
 
@@ -129,7 +136,7 @@ def test_predictor_parity():
         with torch.no_grad():
             legacy_logit = predictor.env.model(torch.FloatTensor(X_legacy).to(next(predictor.env.model.parameters()).device)).cpu().numpy()[0]
             
-        prob_base = 1.0 / (1.0 + np.exp(-legacy_logit))
+        prob_base = float(torch.sigmoid(torch.tensor(legacy_logit)))
         legacy_calib_prob = float(ir.predict([prob_base])[0])
         
         logit_diff = abs(res_new.fraud_score - legacy_logit)
@@ -185,3 +192,33 @@ def test_api_schema_contract():
 def test_bundle_corruption():
     # If checksums are missing, it should fail
     pass # we can test it manually or leave as is
+
+def test_numerical_stability_extreme_amount():
+    predictor = FraudPredictor()
+    
+    # 1. Extreme valid amounts such as 1e9
+    payload = {
+        "step": 1,
+        "type": "TRANSFER",
+        "amount": 1e9,
+        "oldbalanceOrg": 0.0,
+        "orig_account_type": "C",
+        "dest_account_type": "C"
+    }
+    
+    # 2. Do not emit RuntimeWarning
+    req = TransactionRequest(**payload)
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always", RuntimeWarning)
+        res = predictor.predict_single(req)
+        
+        # Verify no RuntimeWarning was emitted (especially "overflow encountered in exp")
+        for warning in w:
+            assert "overflow" not in str(warning.message).lower(), f"Unexpected RuntimeWarning: {warning.message}"
+            
+    # 3. Logits remain finite
+    assert np.isfinite(res.fraud_score)
+    
+    # 4. Calibrated probability is finite and within [0, 1]
+    assert np.isfinite(res.calibrated_probability)
+    assert 0.0 <= res.calibrated_probability <= 1.0

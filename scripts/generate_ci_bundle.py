@@ -6,7 +6,7 @@ import hashlib
 from pathlib import Path
 
 def main():
-    bundle_dir = Path("artifacts/final/inference_bundle")
+    bundle_dir = Path("artifacts/ci_bundle")
     bundle_dir.mkdir(parents=True, exist_ok=True)
     
     # 1. manifest.json
@@ -79,7 +79,7 @@ def main():
     
     # Reference baseline
     baseline = {"feature_0": 0.0, "feature_1": 0.0, "feature_2": 0.0}
-    with open(Path("artifacts/final") / "reference_baseline.json", "w") as f: json.dump(baseline, f)
+    with open(bundle_dir / "reference_baseline.json", "w") as f: json.dump(baseline, f)
     
     print(f"Synthetic CI bundle generated at {bundle_dir}")
 

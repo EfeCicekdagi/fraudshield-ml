@@ -32,6 +32,9 @@ services:
     environment:
       - FRAUDSHIELD_DATABASE_URL=postgresql://fraudshield:password@postgres:5432/cases
       - FRAUDSHIELD_API_KEY=test_key
+      - FRAUDSHIELD_BUNDLE_PATH=/app/artifacts/final/inference_bundle
+    volumes:
+      - ./artifacts/final/inference_bundle:/app/artifacts/final/inference_bundle:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/live"]
       interval: 10s

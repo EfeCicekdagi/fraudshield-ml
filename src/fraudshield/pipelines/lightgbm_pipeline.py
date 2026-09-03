@@ -105,13 +105,13 @@ def run_lightgbm_pipeline(config_path: str):
     if total_inner_rows > config.tuning_max_rows:
         sample_frac = config.tuning_max_rows / total_inner_rows
         # Stratified sampling to maintain fraud ratio
-        df_inner_train = df_inner_train.groupby(data_config.target_column, group_keys=False).apply(
-            lambda x: x.sample(frac=sample_frac, random_state=config.random_seed)
+        df_inner_train = df_inner_train.groupby(data_config.target_column, group_keys=False).sample(
+            frac=sample_frac, random_state=config.random_seed
         )
-        df_inner_val = df_inner_val.groupby(data_config.target_column, group_keys=False).apply(
-            lambda x: x.sample(frac=sample_frac, random_state=config.random_seed)
+        df_inner_val = df_inner_val.groupby(data_config.target_column, group_keys=False).sample(
+            frac=sample_frac, random_state=config.random_seed
         )
-        
+
     y_inner_train = df_inner_train[data_config.target_column].values
     y_inner_val = df_inner_val[data_config.target_column].values
     

@@ -57,6 +57,7 @@ jobs:
     - name: Run Tests
       env:
         FRAUDSHIELD_DATABASE_URL: postgresql://fraudshield:password@localhost:5432/cases
+        FRAUDSHIELD_BUNDLE_PATH: artifacts/ci_bundle
       run: |
         pytest tests/
 
@@ -64,3 +65,13 @@ jobs:
       run: |
         docker compose config
         docker compose build
+        
+    - name: Docker Compose CI Smoke Test
+      run: |
+        # Override the bundle mount for the smoke test
+        export FRAUDSHIELD_BUNDLE_PATH=/app/artifacts/ci_bundle
+        docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d api
+        sleep 10
+        curl -f http://localhost:8000/health/live
+        docker compose logs api
+        docker compose down
