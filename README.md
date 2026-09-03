@@ -1,126 +1,145 @@
 # FraudShield ML
 
-FraudShield ML, finansal işlemler için dolandırıcılık olasılığı ve risk skoru üreten uçtan uca bir makine öğrenmesi projesidir. İlk veri kaynağı olarak **PaySim** kullanılacaktır.
+FraudShield is an end-to-end fraud detection platform that combines point-in-time-safe machine learning, calibrated risk scoring, explainable inference, analyst case management, and observable API deployment.
 
-## Proje Hedefi
+## 1. Dashboard Overview
 
-- Finansal işlemleri `normal` veya `fraud` olarak sınıflandırmak
-- Dengesiz sınıf dağılımını doğru yöntemlerle ele almak
-- Her işlem için açıklanabilir bir risk skoru üretmek
-- Model başarısını yalnızca accuracy ile değil; PR-AUC, recall, precision ve F1 ile değerlendirmek
-- İlerleyen aşamalarda modeli API ve dashboard üzerinden kullanılabilir hâle getirmek
+> ![Dashboard Overview](docs/assets/screenshots/dashboard-overview.png)
+> *Placeholder: A screenshot of the Streamlit analyst dashboard showing the case queue and synthetic transaction alerts.*
 
-## Neden Temporal Split Kullanıyoruz?
-Finansal işlemler zamana bağlıdır. Gelecekteki bir işlemdeki kalıpların, geçmiş işlemleri eğitirken sızdırılması (Data Leakage) modelin gerçek dünya performansını yanıltıcı derecede yüksek gösterebilir. Bu yüzden veriyi `step` (saat) sütununa göre kronolojik olarak bölüyoruz.
+## 2. Key Outcomes
+- **Responsible Model Selection**: Evaluated various architectures and rejected an artifact-dependent LightGBM model in favor of a strictly point-in-time-safe PyTorch MLP.
+- **Explainability**: Integrated Gradients (Captum) assigns feature-level attribution and human-readable reason codes to every prediction.
+- **Microservices Deployment**: Complete containerization with a FastAPI backend, Streamlit frontend, and PostgreSQL database, monitored through Prometheus and Grafana.
 
-## Proje Mimarisi (v0.1.0)
-Proje, araştırma notebook'larından çıkarak modüler ve kurulabilir bir Python paketi (`fraudshield`) haline getirilmiştir. İş mantığı, veri yükleme, özellik çıkarma ve modelleme işlemleri tamamen modüller içerisindedir. Notebook'lar yalnızca EDA (Keşifçi Veri Analizi) ve raporlama amaçlıdır, iş mantığı içermezler. Detaylar için [docs/architecture.md](docs/architecture.md) dosyasına bakabilirsiniz.
+### Live Scoring & Explainability
+> ![Live Scoring](docs/assets/screenshots/live-scoring.png)
+> ![Reason Codes](docs/assets/screenshots/explanation-reason-codes.png)
 
-## Kurulum
+### Case Management
+> ![Case Queue](docs/assets/screenshots/case-queue-history.png)
 
-Projeyi kurulabilir bir paket olarak kullanıyoruz.
+### Observability
+> ![Grafana](docs/assets/screenshots/grafana-observability.png)
+> ![API Docs](docs/assets/screenshots/api-documentation.png)
 
-```bash
-# Sanal ortam oluştur
-python -m venv .venv
+## 3. Why the Model-Selection Process Matters
+During Phase 4, our full engineered LightGBM achieved a PR-AUC of 1.0 on the PaySim dataset. However, a rigorous simulation audit revealed that this perfect score was dominated by dataset-specific balance-error artifacts. Rather than deploying an overfit, artifact-dependent model, it was explicitly rejected. The final deployed model uses only strictly **point-in-time-safe features**, serving as strong evidence of responsible MLOps and scientific integrity over vanity metrics.
+
+## 4. System Architecture
+
+```mermaid
+flowchart LR
+    User([User]) -->|HTTP| Dashboard(Streamlit Dashboard)
+    Dashboard -->|REST API| API(FastAPI Service)
+
+    subgraph FraudShield Engine
+        API -->|Predict| Predictor(Portable PyTorch Predictor)
+        Predictor -->|Calibration| Calibrator[Isotonic Calibration]
+        Predictor -->|Explain| IG[Integrated Gradients]
+        Predictor -->|Read-Only| Bundle[(Inference Bundle)]
+    end
+
+    API -->|Manage Cases| DB[(PostgreSQL)]
+    DB -->|Alembic| Migrations(Migrations)
+
+    API -->|Metrics| Prom(Prometheus)
+    Prom -->|Visualize| Graf(Grafana)
 ```
 
-Windows PowerShell:
-```powershell
-.\.venv\Scripts\Activate.ps1
-pip install -e ".[dev]"
+## 5. Capabilities
+- **Strictly Safe Inference**: No arbitrary Python execution (Scikit-Learn Pickled artifacts are fully extracted to pure NumPy/JSON representations).
+- **FastAPI Backend**: Fully asynchronous, Pydantic-validated REST API.
+- **PostgreSQL Case Management**: Immutable case events and analyst actions.
+- **Observability**: Real-time Prometheus metrics exported to Grafana dashboards.
 
-# For LightGBM support (Phase 4):
-pip install -e ".[boosting]"
+## 6. Quick Start with Docker
 
-# For Deep Learning / PyTorch support (Phase 5):
-pip install -e ".[deep-learning]"
+Start the entire environment locally in synthetic integration mode:
 
-# For API and Dashboard (Phase 8 & 9)
-pip install -e ".[api,dashboard]"
-```
-
-## Veri Seti
-
-PaySim veri seti büyük olduğu için GitHub reposuna yüklenmez. CSV dosyasını yerel olarak aşağıdaki konuma yerleştirin:
-
-```text
-data/raw/PS_20174392719_1491204439457_log.csv
-```
-`data/raw/` içeriği `.gitignore` tarafından korunmaktadır. Büyük çıktı dosyaları veya ara işlenmiş dosyalar (Parquet) Git'e eklenmez.
-
-## CLI Kullanımı (Komut Satırı Arayüzü)
-
-İşlemleri terminal üzerinden tetikleyebilirsiniz. (Konfigürasyonlar `configs/data.yaml` içinden okunur.)
-
-```bash
-# Veriyi doğrula
-fraudshield validate-data --config configs/data.yaml
-
-# Feature'ları (özellikleri) oluştur
-fraudshield build-features --config configs/data.yaml
-
-# Veriyi zaman serisine göre Train/Val/Test olarak böl
-fraudshield split-data --config configs/data.yaml
-
-# Inference API Sunucusunu Başlat
-fraudshield serve --host 127.0.0.1 --port 8000
-# Alternatif: uvicorn fraudshield.api.app:create_app --factory
-```
-
-## Testlerin Çalıştırılması
-
-Tüm testleri (Birim ve Entegrasyon) çalıştırmak için `pytest` kullanabilirsiniz:
-
-```bash
-pytest
-```
-
-## Planlanan Sonraki Aşamalar
-
-1. ~~Veri doğrulama ve keşifçi veri analizi~~ (Tamamlandı)
-2. ~~Feature engineering ve Temporal Split~~ (Tamamlandı)
-3. ~~Baseline model karşılaştırmaları~~ (Tamamlandı)
-4. ~~LightGBM optimizasyonları~~ (Tamamlandı)
-5. ~~Deep Learning (PyTorch MLP) entegrasyonu~~ (Tamamlandı)
-6. ~~Threshold ve Calibration ayarlamaları~~ (Tamamlandı)
-7. ~~Version-Independent Inference Bundle~~ (Tamamlandı)
-8. ~~Production-Oriented FastAPI Inference Service~~ (Tamamlandı)
-9. ~~Streamlit dashboard~~ (Tamamlandı)
-10. ~~Docker Containerization & Observability~~ (Tamamlandı)
-
-## Çalıştırma (Docker Compose)
-Uygulama tüm bileşenleriyle (PostgreSQL, FastAPI, Streamlit Dashboard, Prometheus ve Grafana) tek komutla başlatılabilir:
 ```bash
 docker compose up -d --build
-```
-Daha detaylı bilgi için [docs/deployment.md](docs/deployment.md) dosyasına bakınız.
-
-## Çalıştırma (Inference API ve Dashboard)
-
-Bu proje, production-oriented inference API ve analist operasyonları için bir Streamlit Dashboard sunmaktadır. Dashboard tamamen API-driven olup, hiçbir model objesini belleğe doğrudan yüklemez.
-
-> **Uyarı:** `orig_account_type` ve `dest_account_type` gibi alanlar upstream (güvenilir) sistemler tarafından doğrulanmalı veya üretilmelidir. Halka açık (untrusted) istemcilerden doğrudan gelen bu verilere güvenilmemelidir. 
-
-**API ve Dashboard'u Başlatma (İki ayrı terminalde çalıştırın):**
-
-Terminal 1 (Backend API):
-```powershell
-$env:FRAUDSHIELD_API_KEY="my-secret-key"
-fraudshield serve
+docker compose ps
 ```
 
-Terminal 2 (Streamlit Dashboard):
-```powershell
-$env:FRAUDSHIELD_API_KEY="my-secret-key"
-fraudshield dashboard --api-url http://127.0.0.1:8000/api/v1
+*Note: Ensure the local environment variables are configured as shown in `docs/demo.md`.*
+
+When finished, safely shut down without deleting data:
+```bash
+docker compose down
 ```
 
-**Örnek (PowerShell):**
-```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/predict" `
-  -Method Post `
-  -Headers @{"X-API-Key"="your-secret-key"} `
-  -Body '{"step":1,"type":"PAYMENT","amount":100,"oldbalanceOrg":1000,"orig_account_type":"C","dest_account_type":"M"}' `
-  -ContentType "application/json"
+> [!WARNING]
+> Running `docker compose down -v` will permanently delete your PostgreSQL case database volume!
+
+## 7. Example API Request and Response
+
+**Request:**
+```bash
+curl -X POST "http://127.0.0.1:8000/api/v1/predict" \
+     -H "X-API-Key: test_key" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "step": 1,
+           "type": "TRANSFER",
+           "amount": 500000,
+           "oldbalanceOrg": 500000,
+           "orig_account_type": "C",
+           "dest_account_type": "C"
+         }'
 ```
+
+**Response:**
+```json
+{
+  "fraud_score": 2.14,
+  "calibrated_probability": 0.89,
+  "risk_level": "CRITICAL",
+  "is_alert": true,
+  "reason_codes": ["RC001", "RC002"]
+}
+```
+
+## 8. Evaluation Results
+
+Final point-in-time-safe PyTorch MLP results (on temporal holdout):
+
+| Metric | Score |
+|---|---|
+| PR-AUC | 0.7442 |
+| F1 Score | 0.5662 |
+| Recall | 0.7574 |
+| Precision | 0.4521 |
+| Alerts per 1,000 tx | 7.31 |
+
+> [!NOTE]
+> The evaluation set had previously been used during the Phase 3 baseline analysis and therefore is not a pristine holdout set.
+
+## 9. Testing and Security
+- Over 50 unit and integration tests passing (`pytest tests/`).
+- No sensitive keys, passwords, or datasets tracked in the repository.
+- Docker containers run as `nonroot`.
+- Inference bundle explicitly mounted as `ro` (read-only).
+
+## 10. Repository Structure
+```text
+fraudshield-ml/
+├── docs/                # Technical documentation and reports
+├── examples/            # Synthetic API payloads
+├── src/fraudshield/     # Core application source code
+├── tests/               # Pytest suite
+├── docker-compose.yml   # Multi-container orchestration
+└── README.md            # This file
+```
+
+## 11. Documentation Links
+See the complete [Documentation Index](docs/README.md) for detailed reports on data exploration, leakage auditing, architecture, and deployment.
+
+## 12. Limitations
+- Models are trained on the synthetic PaySim dataset and do not represent real-bank performance.
+- Calibrated scores are statistical representations within the synthetic dataset, not real-world true fraud probabilities.
+- Security configurations (API keys) are structured for a production-oriented portfolio and demonstration system, not enterprise banking integration.
+
+## 13. Author and License Status
+- **Author**: Efe Çiçekdağı
+- **License**: MIT License (See `LICENSE` file for details).

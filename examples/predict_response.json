@@ -1,0 +1,37 @@
+{
+  "fraud_score": 2.14,
+  "calibrated_probability": 0.89,
+  "risk_level": "CRITICAL",
+  "is_alert": true,
+  "decision_threshold": 0.80,
+  "reason_codes": [
+    "RC001",
+    "RC002"
+  ],
+  "top_contributors": [
+    {
+      "feature": "amount",
+      "display_name": "Amount",
+      "value": 500000.0,
+      "attribution": 1.45,
+      "direction": "increases_risk",
+      "reason_code": "RC001"
+    },
+    {
+      "feature": "amount_to_oldbalance_orig_ratio",
+      "display_name": "Amount To Oldbalance Orig Ratio",
+      "value": 1.0,
+      "attribution": 0.72,
+      "direction": "increases_risk",
+      "reason_code": "RC002"
+    }
+  ],
+  "explanation": {
+    "enabled": true,
+    "method": "Integrated Gradients",
+    "target": "Raw Logit",
+    "convergence_delta": 0.012
+  },
+  "model_version": "1.0.0",
+  "inference_id": "00000000-0000-0000-0000-000000000000"
+}

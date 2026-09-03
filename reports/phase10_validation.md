@@ -2,7 +2,7 @@
 
 ## 1. Corrections and Fixes
 - **Terminology**: Replaced CI/CD with CI and replaced legacy docker-compose with docker compose.
-- **Terminology**: Updated "fully production-ready" to "production-oriented, containerized ML inference system".
+- **Terminology**: Updated "fully production-ready" to "production-oriented portfolio and demonstration system".
 - **Audit Context Security**: Added AuditContext explicit schema. Removed analyst notes from the audit previous_value / new_value to prevent duplicating sensitive data. Validated no update/delete operations exist on the CaseEvent table in repository.py.
 - **Prometheus**: Replaced raw paths containing UUIDs in the FastAPI middleware to normalized parameterized routes. Verified metric labels do not contain sensitive request_id, case_id, transaction_reference, amounts, or raw URLs.
 - **Docker Security**: Added nonroot user execution to the Dockerfile. Excluded .env via .dockerignore. Bound PostgreSQL to internal Docker network only. Added API healthchecks and explicit wait conditions (depends_on).

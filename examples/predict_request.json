@@ -1,0 +1,8 @@
+{
+  "step": 1,
+  "type": "TRANSFER",
+  "amount": 500000.0,
+  "oldbalanceOrg": 500000.0,
+  "orig_account_type": "C",
+  "dest_account_type": "C"
+}

@@ -4,7 +4,7 @@ This document summarizes the architecture, capabilities, and outputs of the Phas
 
 ## Architecture
 
-The inference pipeline is designed to be lightweight, production-ready, and fully uncoupled from legacy Scikit-Learn Pickled artifacts (`.joblib`). By utilizing a **Version-Independent Inference Bundle**, we've eliminated the risk of breaking changes caused by Scikit-Learn version mismatches (`1.3` vs `1.9`) and avoided unsafe unpickling of arbitrary Python objects at runtime.
+The inference pipeline is designed to be lightweight, structured as a production-oriented portfolio and demonstration system, and fully uncoupled from legacy Scikit-Learn Pickled artifacts (`.joblib`). By utilizing a **Version-Independent Inference Bundle**, we've eliminated the risk of breaking changes caused by Scikit-Learn version mismatches (`1.3` vs `1.9`) and avoided unsafe unpickling of arbitrary Python objects at runtime.
 
 1.  **Data Validation:** Inbound requests are validated using Pydantic (`TransactionRequest`).
 2.  **Feature Engineering:** Raw features are dynamically transformed (e.g., `hour_of_day`, `day_of_week`, `is_risky_type`).

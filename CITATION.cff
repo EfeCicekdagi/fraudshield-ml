@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software in your research or portfolio, please cite it as below."
+authors:
+  - family-names: "Çiçekdağı"
+    given-names: "Efe"
+title: "FraudShield ML: End-to-end explainable fraud detection platform"
+version: "1.0.0"
+date-released: "2026-09-03"
+url: "https://github.com/EfeCicekdagi/fraudshield-ml"
